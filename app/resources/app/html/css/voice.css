@@ -1,0 +1,81 @@
+#preloader_1{
+  position: relative;
+  top: 50px;
+}
+
+#preloader_1 span{
+  display:block;
+  bottom:0px;
+  width: 9px;
+  height: 5px;
+  background:#9b59b6;
+  position:absolute;
+  -webkit-animation: preloader_1 1s infinite ease-in-out;
+  -moz-animation: preloader_1 1s infinite ease-in-out;
+  -ms-animation: preloader_1 1s infinite ease-in-out;
+  animation: preloader_1 1s infinite ease-in-out;
+}
+
+#preloader_1 span:nth-child(2){
+  left:11px;
+  -webkit-animation-delay: .1s;
+  -moz-animation-delay: .1s;
+  -ms-animation-delay: .1s;
+  -o-animation-delay: .1s;
+  animation-delay: .1s;
+}
+
+#preloader_1 span:nth-child(3){
+  left:22px;
+  -webkit-animation-delay: .2s;
+  -moz-animation-delay: .2s;
+  -ms-animation-delay: .2s;
+  -o-animation-delay: .2s;
+  animation-delay: .2s;
+}
+
+#preloader_1 span:nth-child(4){
+  left:33px;
+  -webkit-animation-delay: .3s;
+  -moz-animation-delay: .3s;
+  -ms-animation-delay: .3s;
+  -o-animation-delay: .3s;
+  animation-delay: .3s;
+}
+
+#preloader_1 span:nth-child(5){
+  left:44px;
+  -webkit-animation-delay: .4s;
+  -moz-animation-delay: .4s;
+  -ms-animation-delay: .4s;
+  -o-animation-delay: .4s;
+  animation-delay: .4s;
+}
+
+@-webkit-keyframes preloader_1 {
+    0% {height:5px;-webkit-transform:translateY(0px);background:#9b59b6;}
+    25% {height:30px;-webkit-transform:translateY(15px);background:#3498db;}
+    50% {height:5px;-webkit-transform:translateY(0px);background:#9b59b6;}
+    100% {height:5px;-webkit-transform:translateY(0px);background:#9b59b6;}
+}
+
+@-moz-keyframes preloader_1 {
+    0% {height:5px;-moz-transform:translateY(0px);background:#9b59b6;}
+    25% {height:30px;-moz-transform:translateY(15px);background:#3498db;}
+    50% {height:5px;-moz-transform:translateY(0px);background:#9b59b6;}
+    100% {height:5px;-moz-transform:translateY(0px);background:#9b59b6;}
+}
+
+@-ms-keyframes preloader_1 {
+    0% {height:5px;-ms-transform:translateY(0px);background:#9b59b6;}
+    25% {height:30px;-ms-transform:translateY(15px);background:#3498db;}
+    50% {height:5px;-ms-transform:translateY(0px);background:#9b59b6;}
+    100% {height:5px;-ms-transform:translateY(0px);background:#9b59b6;}
+}
+
+@keyframes preloader_1{
+  0%{height: 5px;transform:translateY(0px);background:#9b59b6;}
+  25%{height: 30px;transform:translateY(15px);background:#3498db;}
+  50%{height: 5px;transform:translateY(0px);background:#9b59b6;}
+  100%{height: 5px;transform:translateY(0px);background:#9b59b6;}
+}

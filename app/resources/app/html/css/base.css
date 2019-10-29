@@ -1,0 +1,70 @@
+/**
+ * 描述：重置页面元素并基础样式
+ * 作用范围： 全局
+ */
+html,body {
+	font-family: -apple-system, BlinkMacSystemFont, 'Microsoft YaHei', sans-serif !important;
+    font-size: 10px;
+    line-height: 100%;
+}
+body,p,pre,blockquote,h1,h2,h3,h4,h5,h6,dl,dt,dd,ul,ol,li,form,select,input,textarea,button,table,caption,tr,th,td{margin:0;padding:0}
+ol,ul{list-style:none;margin-bottom: 0px !important;padding-bottom: 0px !important;}
+table{border-collapse:collapse;border-spacing:0}
+img{max-width:100%;border:0 none}
+input,button,textarea,select,option{outline:0;font-size:100%;font-family:inherit}
+textarea{overflow:auto;resize:none}
+button::-moz-focus-inner,input::-moz-focus-inner{padding:0;border:0}
+.h1,.h2,.h3,h1,h2,h3{margin: 0px !important;padding: 0px !important;}
+
+@font-face {
+  font-family: 'iconfont';
+  src: url('../font/ali/iconfont.eot');
+  src: url('../font/ali/iconfont.eot?#iefix') format('embedded-opentype'),
+      url('../font/ali/iconfont.woff2') format('woff2'),
+      url('../font/ali/iconfont.woff') format('woff'),
+      url('../font/ali/iconfont.ttf') format('truetype'),
+      url('../font/ali/iconfont.svg#iconfont') format('svg');
+}
+
+.iconfont {font-family: "iconfont" !important;font-size: 16px;line-height:120%;font-style: normal;-webkit-font-smoothing: antialiased;-moz-osx-font-smoothing: grayscale;}
+
+/*主体容器*/
+.micron-body{margin:0px;}
+
+/*顶部状态*/
+.top_status{position: absolute;top:5px;left:5px;z-index: 99999;}
+
+/*显示文字*/
+#tishiText{position: absolute;z-index:99999; bottom:10%;width:100%;text-align: center;font-size: 1.0rem;line-height:1.10rem}
+#tishiText div{position: relative;}
+#tishiText .zhuren{color:#00CC33;}
+#tishiText .mojing{color:#FF0066;}
+
+/*常用字体颜色*/
+.fc_cyan{color: #7fff00;} 		/*青色*/
+.fc_green{color: #7cfc00;}  	/*绿色*/
+.fc_red{color: red;}			/*红色*/
+
+/*动画加载*/
+#loading{background-color:#000;height:100%;width:100%;position:fixed;z-index:1;margin-top:0px;top:0px}
+#loading-center{width:100%;height:100%;position:relative;left:0px;top:0px;}
+#loading-center-absolute{position:absolute;left:50%;top:50%;height:200px;width:200px;margin-top:-100px;margin-left:-100px}
+
+/* .object{-moz-border-radius:50% 50% 50% 50%;-webkit-border-radius:50% 50% 50% 50%;border-radius:50% 50% 50% 50%;position:absolute;border-left:5px solid #FFF;border-right:5px solid #FFF;border-top:5px solid transparent;border-bottom:5px solid transparent;-webkit-animation:animate 2s infinite;animation:animate 2s infinite}#object_one{left:75px;top:75px;width:50px;height:50px}#object_two{left:65px;top:65px;width:70px;height:70px;-webkit-animation-delay:0.1s;animation-delay:0.1s}#object_three{left:55px;top:55px;width:90px;height:90px;-webkit-animation-delay:0.2s;animation-delay:0.2s}#object_four{left:45px;top:45px;width:110px;height:110px;-webkit-animation-delay:0.3s;animation-delay:0.3s}@-webkit-keyframes animate{50%{-ms-transform:rotate(180deg);-webkit-transform:rotate(180deg);transform:rotate(180deg)}100%{-ms-transform:rotate(0deg);-webkit-transform:rotate(0deg);transform:rotate(0deg)}}@keyframes animate{50%{-ms-transform:rotate(180deg);-webkit-transform:rotate(180deg);transform:rotate(180deg)}100%{-ms-transform:rotate(0deg);-webkit-transform:rotate(0deg);transform:rotate(0deg)}} */ */
+
+#loading {display: flex;align-items: center;justify-content: center;}
+#loading .font .line{font-size: 14pt;line-height: 20pt;text-align: center;margin-top: 40pt;font-family:"Monaco"}
+#loading svg{position: absolute;top: 110px;left: 5px;}
+#loading .face {position: absolute;border-radius: 50%;border-style: solid;animation: animate 3s linear infinite;}
+#loading .face:nth-child(1) {width: 100%;height: 100%;color: gold;border-color: currentColor transparent transparent currentColor;border-width: 0.2em 0.2em 0em 0em;--deg: -45deg;animation-direction: normal;}
+#loading .face:nth-child(2) {width: 70%;height: 70%;top:30px;left:30px; color: lime;border-color: currentColor currentColor transparent transparent;border-width: 0.2em 0em 0em 0.2em;--deg: -135deg;animation-direction: reverse;}
+#loading .face .circle {position: absolute;width: 50%;height: 0.1em;top: 50%;left: 50%;background-color: transparent;transform: rotate(var(--deg));transform-origin: left;}
+#loading .face .circle::before {position: absolute;top: -0.5em;right: -0.5em;content: '';width: 1em;height: 1em;background-color: currentColor;border-radius: 50%;box-shadow: 0 0 2em,0 0 4em,0 0 6em,0 0 8em,0 0 10em,0 0 0 0.5em rgba(255, 255, 0, 0.1);}
+@keyframes animate {to {transform: rotate(1turn);}}
+
+
+
+/*麦克风状态*/
+.micro{position: fixed;bottom:85px;left:47%;display: none;}
+.micro #canvas {display:block;position: absolute;}
+.micro svg{position: absolute;top:24px;left:24px;}

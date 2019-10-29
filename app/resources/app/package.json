@@ -1,0 +1,14 @@
+{
+	"main": "main.js",
+	"name": "moJing",
+	"scripts": {
+		"start": "electron .",
+		"pack": "electron-packager . moJing --platform=linux --out E:/alidata/kxoa/release/moJing --arch=armv7l --app-version=0.0.2 --electron-version=5.0.6"
+	},
+	"dependencies": {
+		"mqtt": "^2.18.8",
+		"qr-image": "^3.2.0",
+		"querystring": "^0.2.0",
+		"nodejs-websocket": "^1.7.2"
+	}
+}

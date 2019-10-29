@@ -1,0 +1,25 @@
+@font-face {font-family: "iconfont";
+  src: url('iconfont.eot?t=1548687304879'); /* IE9 */
+  src: url('iconfont.eot?t=1548687304879#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('data:application/x-font-woff2;charset=utf-8;base64,d09GMgABAAAAAAQ0AAsAAAAACGQAAAPnAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHEIGVgCDBgqEPINeATYCJAMMCwgABCAFhG0HSBs2B1FUbdpkPyRJAvx4Jtj6cmHsCAhAZ6RIAAAAAEAE0VpWPTMLIXSJeiCFCtgCotAvAVWUeA0kkS2Ben3zzuVnAOAWOyDqjRRCIe31ii+XkWM/OzeFIBkc4/+spm4bmmtvnjZvj6nevmKaLG/EGy56nyEkQoL/OWa6SBtgfpvNJTtwgKMEGlD2XeO9E74WxnuIt8u1w3qYQLdJYazWUCXlwFEB6wJxRhRo4JjSKjWFoRXqkqMlxQ2VNl1Mj7ju/338Mj9akiqDrRuO5XMg6+vym73N+Q5vj4vAG88M8RQZ8wCF2Fdq3cEmjM5jo1uX2tZn1oqQxgp8/+NzDXGN//BIgqiBtJfFzlInJ8WzGSS+2fPPmndzq2uMAG7iE4cdLetXdUdvDHHmvuh3r8pFgqS0LD8nLgjzcFYSuz4zO1OvteuZIV9SuGqEdJdswddXVtcUPrMgENJmsOXUtRU+9hjFS3M/Qycpfk4vzpAnKRzgJm+xfm95EKCv7d/eHaSL+7YORpgSSU/UQGb+Ht46dm7OD7MnVvErrKuvd9YCRymHn6GdcF5gP0pQWWGdZZpAAil3cptIWl1gam5IOLRd1HckngjH8PC+jOi44ccgPUTJ5o0afc17HLka0la4F1LeXlmSu56kBj3GMqVWU4v+X5gzk7kYeiRZN1jb5X75d/TQzfJFj/z0hMkKPDM5jD8mXM/ErualVQ2+RDVuq/7cCjmM7HcoKruXDbw5rU8SZps/vStti5gaC/hddCLdQP1dszDP/RuDTXR64kDaYSvq9fv6jCM7yUuu/+b+c75/6M0Y71t+MN+43D/U0pNlWRs9Ta0TFjPV/cY/l+/czBPwEwEyzXOh4dmPzW6y84LFHMLXJmkGK/O1dE1nLn+n4/+8zLRHw0P7PZb8b3u+fd/7uqRd392ZK5J2ubQSrXl/1VcavmUXoMulTKq2MZAd5P7O1LoxQEcCzmG3/e1jQGwOrcRjIGlMQNaahizYeVDpsRBqreXQbS7D6R4jMBtRujBHH4EwaBqSfnchG3SELNgbqIz7DbXByNBtW4xc2WNGnHRejRFNEAeZDiiymspTA3EOCkuR0CLTOCnwyZUIm8UAjHb3zCYMSEV4jB3mViGGEB7yWFMgRR6HZFmDOtZMiCURRkL0lEiPkrJ3imA1BThbDUNoBMKBGB0gEUuj4t3ehHPu90shghYyGq7pqDNXQjAzcXIoWoSoFkiDVG3VcS2zzVoJYhAEz63iYRoFRDFmRMaoBtLLF5kgLCKCsUdYlyKS7ca3lUbML1ee7xh0g7M5UuQo6nNam8iLfoe/L7yqkCpkjbQqSLQIAAA=') format('woff2'),
+  url('iconfont.woff?t=1548687304879') format('woff'),
+  url('iconfont.ttf?t=1548687304879') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
+  url('iconfont.svg?t=1548687304879#iconfont') format('svg'); /* iOS 4.1- */
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-nowifi:before {
+  content: "\e726";
+}
+
+.icon-iconfont-WIFIchangkai:before {
+  content: "\e6ae";
+}
+
