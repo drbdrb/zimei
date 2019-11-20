@@ -1,6 +1,4 @@
-const electron = require('electron');
-const {app,BrowserWindow} = electron;
-config = require('./config');
+const {app,BrowserWindow} = require('electron');
 const control = require('./control');
 
 var mainWindow = null;
@@ -13,6 +11,8 @@ app.on('window-all-closed', function() {
 		app.quit();
 	}
 });
+
+app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
 
 app.on('ready', function() {
 	//隐藏菜单栏
@@ -44,9 +44,7 @@ app.on('ready', function() {
 
 	console.win = mainWindow;
 
-	// 加载应用的 index.html
-	mainWindow.loadURL("file:///"+__dirname+"/html/index.html");
-
+	// 加载应用
 	control.Init(mainWindow);
 
 	// 当mainWindow被关闭，这个事件会被发出

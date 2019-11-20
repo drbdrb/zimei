@@ -10,9 +10,6 @@ import requests
 import package.include.baiduapi.token as key
 from package.base import Base, log
 
-#参考资料https://www.cnblogs.com/Pond-ZZC/p/6718205.html
-#播放声音https://blog.csdn.net/xiongtiancheng/article/details/80577478
-
 class Shibie(Base):
     '''百度语音识别'''
 

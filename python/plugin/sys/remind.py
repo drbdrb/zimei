@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
-from plugin import Plugin
-import time,os,re
-import multiprocessing as mp    #多进程
+import multiprocessing as mp  # 多进程
+import os
+import re
+import time
+
 from package.base import Base, log
+from plugin import Plugin
+
 
 class Remind(Base,Plugin):
 
@@ -10,6 +14,7 @@ class Remind(Base,Plugin):
         self.kill = mp.Value("h",0)  #定义全局共享内存
         self.go = mp.Value("h",0)  #定义全局共享内存
         self.ai  ='' #记录备注
+        
     #计算 参数输入 举例：一分钟 返回多少秒
     def second(self,t):   
         ints = ["一","二","三","四","五","六","七","八","九","零","十","百","千","万","亿"]
@@ -123,9 +128,12 @@ class Remind(Base,Plugin):
             return {'state':True,'data':"没有启动提醒功能，如：一分钟后提醒我",'msg':'','stop':True}
             
     #停止
-    def stop(self, enobj={}):
-        if  self.go.value  == 1:
-            self.kill.value  = 1           
+    def stop(self, enobj={"name":"keyword"}):
+        if enobj["name"] == "keyword":
+            return
+
+        if  self.go.value == 1:
+            self.kill.value = 1
             return {'state':True,'data':"提醒已经取消",'msg':'','stop':True}
         else:
             return {'state':True,'data':"没有启动提醒功能",'msg':'','stop':True}
@@ -242,13 +250,3 @@ class Str_int():
             if int(str(yi)+str(save)) <20:
                 return int(str(yi)+str(save))+10
             return int(str(yi)+str(save))
-                    
-            
-            
-            
-            
-            
-            
-            
-            
-            

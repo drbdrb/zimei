@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>检测网络状态</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+	<style type="text/css">
+		body{background: #FFF;}
+	    #end_text{color: #999;font-size: 60%;}
+	</style>
+</head>
+<body>
+<div class="">
+    <h3>正在验证网络状态</h3>
+    <dl id="status">
+	    <dd id="st_text"></dd>
+	    <dd id="end_text"></dd>
+    </dl>
+</div>
+<script type="text/javascript" src="js/static/jquery-2.0.3.min.js"></script>
+<script type="text/javascript">
+$(function(){
+	var ctime_i = ''
+	require('electron').ipcRenderer.on('public',function(event, json){
+		if( json.t == 'setnet' ){
+			if (json.netstatus == 1){
+				$("#st_text").html("连接成功！");
+				$("#end_text").html("系统将在3秒钟后进入首页");
+			}else{
+				ctime_i = ctime_i + '.';
+				if (ctime_i.length > 8 ) ctime_i = '.';
+				$("#st_text").html("正在连接"+ ctime_i +"，请稍候！");
+				$("#end_text").html("如果长期处于正在连接状态，请关闭设备重启。");
+			}
+		}
+	})
+})
+</script>
+</body>
+</html>

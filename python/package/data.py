@@ -11,19 +11,42 @@ class data():
     def __init__(self):
         self.db = model(config['database'])
 
-
     #关闭数据库
     def close(self):
         self.db.close()
 
+    def search_list(self,lists,key):
+        for item in lists:
+            if item['id']==key:
+                return item
+        return False
+
     #获取配置
     def getconfig(self):
-        conf = {}
         res = self.db.table('config').sel()
-        if res:
-            for v in res:
-                conf[v['key']] = v['value']
-        return conf
+        conf_tab = {}
+        new_conf = {}
+        for item in res:
+            if int(item['class'])==0:
+                if item['id'] not in conf_tab:
+                    conf_tab[item['id']] = {'key':item['key'],'val':item['value']}
+            else:
+                if item['class'] in conf_tab:
+                    if type(conf_tab[ item['class'] ]['val']) is not dict:
+                        conf_tab[ item['class'] ]['val'] = {item['key']:item['value']}
+                    else:
+                        conf_tab[ item['class'] ]['val'].setdefault(item['key'],item['value'])
+                else:
+                    p_item = self.search_list(res,item['class'])
+                    if len(p_item)>0:
+                        conf_tab[p_item['id']] = {'key': p_item['key'],'val': {item['key']:item['value']} }
+
+        if len(conf_tab)>0:
+            for tab_i in conf_tab:
+                tab_item = conf_tab[ tab_i ]
+                new_conf.setdefault(tab_item['key'],tab_item['val'])
+
+        return new_conf
 
     #修改数据库
     def setconfig(self, tab):                                   #将tab写入数据库
@@ -58,26 +81,26 @@ class data():
         else:
             self.db.table('config').add({'key':'clientid','value':jsonstr['clientid'],'nona':'设备ID'})
 
-        where = {'key':'mqtt_name'}
+        where = {'key':'mqttname'}
         cx = self.db.table('config').where(where).find()
         if(cx):
             self.db.table('config').where(where).setField('value',jsonstr['clientid'])
         else:
-            self.db.table('config').add({'key':'mqtt_name','value':jsonstr['clientid'],'nona':'MQTT用户名'})
+            self.db.table('config').add({'key':'mqttname','value':jsonstr['clientid'],'nona':'MQTT用户名'})
 
-        where = {'key':'mqtt_pass'}
+        where = {'key':'mqttpass'}
         cx = self.db.table('config').where(where).find()
         if(cx):
             self.db.table('config').where(where).setField('value',jsonstr['skey'])
         else:
-            self.db.table('config').add({'key':'mqtt_pass','value':jsonstr['skey'],'nona':'MQTT密钥'})
+            self.db.table('config').add({'key':'mqttpass','value':jsonstr['skey'],'nona':'MQTT密钥'})
 
-        where = {'key':'mqtt_devid'}
+        where = {'key':'mqttdevid'}
         cx = self.db.table('config').where(where).find()
         if(cx):
             self.db.table('config').where(where).setField('value',jsonstr['devid'])
         else:
-            self.db.table('config').add({'key':'mqtt_devid','value':jsonstr['devid'],'nona':'MQTT密钥ID'})
+            self.db.table('config').add({'key':'mqttdevid','value':jsonstr['devid'],'nona':'MQTT密钥ID'})
 
         ret_dict = {
             'clientid'   : jsonstr['clientid'],

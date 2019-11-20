@@ -1,8 +1,10 @@
-import os,time
-from package.base import Base,log
+import os
+import time
 
-from package.include.opencv import Opencv         #人脸离线识别
-import package.include.baiduapi.contrast as contrast  #人脸在线对比
+import package.include.baiduapi.contrast as contrast  # 人脸在线对比
+from package.base import Base, log
+from package.include.opencv import Opencv  # 人脸离线识别
+
 
 class Visual(Base):
     """视觉类"""
@@ -14,7 +16,7 @@ class Visual(Base):
 
         self.is_video = False           # 是否启动人脸识别
         self.video_i = 0
-        self.video_max = 10
+        self.video_max = 5
 
         self.opencv = Opencv()          #人脸识别类
         self.opencv.success = self.success_max
@@ -45,14 +47,19 @@ class Visual(Base):
         
     #抓拍人脸成功
     def success_max(self, is_succ):
+        #释放摄像头并销毁所有窗口
 
-        if self.video_i >= self.video_max:
-            return
+        self.video_i += 1
+
+        if self.video_i > self.video_max:              
+            self.opencv.close()
+            return True
+            
         if is_succ:
             duibi_info = self.start_contrast_face( self.user_info, 0 )
-            if len(duibi_info) <= 0:
-                self.start_video()
-            else:
+            if len(duibi_info) > 0:
+
+                self.opencv.close()
                 data = {
                     'enter': 'camera',
                     'type': 'system',
@@ -61,29 +68,28 @@ class Visual(Base):
                     'data': '嗨，你好！' + str(duibi_info['nickname']),
                     'body': duibi_info
                 }
-           
-                self.success(data)
 
-        else:
-            self.start_video()
+                self.success(data)
+                return True
+
+        return False          
+               
 
     #开始抓拍人脸
     def start_video(self):
-        self.video_i += 1
-        fier_file = os.path.join(self.config['root_path'], "data/shijue/haarcascade_frontalface_default.xml")
-        #fier_file2 = os.path.join(self.config['root_path'], "data/shijue/haarcascade_righteye_2splits.xml")
-        param = {
-            'temp_file': self.temp_photo,
-            'fier_file':{ 
-                'file': fier_file,           
-                },
-         #   'show_win':{
-         #      "is_show":False,
-         #      "is_focus":False,
-         #     },            
-            }
 
-        self.opencv.main_video( param )
+        fier_file = os.path.join(self.config['root_path'], "data/shijue/haarcascade_frontalface_default.xml")
+
+        fier_file = [{'file':fier_file,'scaleFactor': 1.2,'minNeighbors': 5,'minSize': (40,40)}]
+
+        window    = {'name':'Facerecognition','size':(640,480),'is_capture': 1}
+
+        save      = {'type': 3,'color': 1}
+
+        self.opencv.main_video(temp_file=self.temp_photo,fier_file =fier_file,window =window ,save=save,camera_angle = 0,thre = 0.5  )    
+       
+        
+    
 
     def main( self ):
 
@@ -97,5 +103,5 @@ class Visual(Base):
                 if len(x['facepath'])>0:
                     if os.path.isfile(x['facepath']):
                         self.is_video = True
-            if self.is_video:self.start_video()
-
+            if self.is_video:
+                self.start_video()

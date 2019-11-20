@@ -17,10 +17,8 @@
 		.button:active{background-color: #179B16;color: rgba(255, 255, 255, 0.6);}
 		.button:disabled{background-color: #9ED99D !important;color: rgba(255, 255, 255, 0.6) !important;}
 
-		.weui-btn{position: relative;display: block;margin-left: auto;margin-right: auto;padding-left: 14px;padding-right: 14px;box-sizing: border-box;font-size: 18px;text-align: center;text-decoration: none;color: #fff;line-height: 2.55555556;border-radius: 5px;-webkit-tap-highlight-color: rgba(0,0,0,0);overflow: hidden;
-		}
-		.weui-btn:after {content: " ";width: 200%;height: 200%;position: absolute;top: 0;left: 0;border: 1px solid rgba(0,0,0,.2);-webkit-transform: scale(.5);transform: scale(.5);-webkit-transform-origin: 0 0;transform-origin: 0 0;box-sizing: border-box;border-radius: 10px;
-		}
+		.weui-btn{position: relative;display: block;margin-left: auto;margin-right: auto;padding-left: 14px;padding-right: 14px;box-sizing: border-box;font-size: 18px;text-align: center;text-decoration: none;color: #fff;line-height: 2.55555556;border-radius: 5px;-webkit-tap-highlight-color: rgba(0,0,0,0);overflow: hidden;}
+		.weui-btn:after {content: " ";width: 200%;height: 200%;position: absolute;top: 0;left: 0;border: 1px solid rgba(0,0,0,.2);-webkit-transform: scale(.5);transform: scale(.5);-webkit-transform-origin: 0 0;transform-origin: 0 0;box-sizing: border-box;border-radius: 10px;}
 
 		.return{color: #000;background-color: #f8f8f8;margin-top: 15px;}
 
@@ -35,7 +33,8 @@
 
 		#wait_div{display: none; position: absolute;z-index: 10000; width:100%;height:100%;top: 0px;left: 0px;background-color: rgba(0, 0, 0, 0.5);}
 		#wait_div .tishi{position: absolute;z-index: 10001; width:90%;top:10%;left:5%;border: 1px solid #E4E4E4;background-color: #f5f3f3;border-radius: 3px;height: 50%;padding-top: 30%;text-align: center;}
-		#wait_div .tishi div{margin: 10px;}
+		#wait_div .tishi div{margin: 10px;line-height: 180%}
+		#wait_div .red{color: #ff0000;}
 	</style>
 </head>
 <body>
@@ -83,7 +82,7 @@
 		<div class="tishi">
 			<div>
 				<h2>正在尝试设备连接</h2>
-				<span>请注意查看设备上的连接状态提示！</span>
+				<div>手机辅助配网工作已经完成，<div class="red">请查看设备上的连接状态提示！</div></div>
 			</div>
 		</div>
 	</div>
@@ -93,7 +92,8 @@ $(function(){
 	var select = $('#select');
 	var set_net = $('#set_net');
 	var wait_div = $('#wait_div');
-	(load_list = function(){
+	var retry_i = 0;
+	var load_list = function(){
 		select.show();
 		$.ajax({
 			url: '/getwifilist.py',
@@ -103,6 +103,10 @@ $(function(){
 			},
 			success: function(json) {
 				var arr = JSON.parse(json);
+				if (arr.length<=0 && retry_i<=10){
+					retry_i++;
+					setTimeout(() => {load_list()}, 500);
+				}
 				var html = '<table class="tab" cellpadding="0" cellspacing="0">';
 				$.each( arr, function(i, n){
 					html += '<tr data-name="'+n.wifi_name+'"><td class="name">'+ n.wifi_name +'</td><td class="qiandu"><div style="width:'+ n.wifi_qual+'%"></div></td></tr>';
@@ -124,7 +128,11 @@ $(function(){
 				});
 			}
 		});
-	})();
+	};
+
+	setTimeout(() => {
+		load_list()
+	}, 1000);
 
 	//刷新按钮
 	$('#refresh').click(function(){

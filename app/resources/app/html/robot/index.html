@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    <title>自美系统</title>
+    <style>
+        body {
+            text-align: center;
+            margin-top: 100px;
+            background-color: #ffffff;
+        }
+
+        #side {
+            width: 490px;
+            /* border: 2px solid black; */
+            margin-left: 750px;
+            /* position: relative; */
+        }
+
+        #myCanvas,
+        #myCanvas1 {
+            margin: 0 20px;
+        }
+
+        #myCanvas2 {
+            margin-top: 50px;
+        }
+
+        .cl {
+            float: left;
+        }
+
+        .ed-box {
+            position: relative;
+        }
+
+        .ed_box .mic {
+            margin-top: -324px;
+        }
+    </style>
+</head>
+
+<body>
+    <button type="button" id="input">点击变换</button>
+    <div id="face">
+        <!-- 左眼 -->
+        <canvas id="myCanvas" width="200" height="170"></canvas>
+        <!-- 右眼 -->
+        <canvas id="myCanvas1" width="200" height="170"></canvas>
+        <!-- 嘴巴 -->
+        <div><canvas id="myCanvas2" width="200" height="150"></canvas></div>
+    </div>
+
+    <div id="side">
+        <!-- 侧脸 -->
+        <div class="cl">
+            <canvas id="myCanvas3" width="250" height="320"></canvas>
+        </div>
+        <div class="ed_box">
+            <!-- 耳朵 -->
+            <div class="edou">
+                <canvas id="myCanvas4" width="240px" height="300px"></canvas>
+            </div>
+            <!-- 麦 -->
+            <div class="mic">
+                <canvas id="myCanvas5" width="240px" height="300px"></canvas>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../js/static/jquery-2.0.3.min.js"></script>
+<script type="text/javascript" src="js/robot.js"></script>
+<!--机器人-->
+<script>
+    var once = true; //判断每次点击应该执行什么代码
+    $(document).ready(function() {
+        $("#face").attr("style", "display:none"); //隐藏face div
+        
+        $("#input").click(function() {
+            if (once) { //如果正脸不显示，侧脸会显示
+                $("#face").css({
+                    "display": "none"
+                });
+                $("#side").css({
+                    "display": "block"
+                });
+            } else { //如果侧脸不显示，正脸会显示
+                $("#side").css({
+                    "display": "none"
+                });
+                $("#face").css({
+                    "display": "block"
+                });
+            }
+            once = !once;
+        });
+    });
+</script>
+
+</html>

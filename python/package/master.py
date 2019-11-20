@@ -15,7 +15,6 @@ from struct import pack
 import numpy as np
 import package.check as check  # 设备检测模块
 import package.include.snowboy.snowboy as snowboy  # 语音唤醒
-import package.include.visual as visual  # 视觉相关（人脸识别）
 import package.include.yuyin as yuyin  # 语音相关操作（语音转文字：录音、识别）
 import package.mymqtt as mymqtt  # mqtt服务（神经网络）
 import package.mysocket as mysocket  # 发送websocket
@@ -25,18 +24,16 @@ import webrtcvad
 from package.base import Base, log  # 基本类
 from package.device import device  # 设备管理类
 
-
 class public_obj(Base):
     '''全局对象（主要是导入到插件相关进程中）'''
 
     def __init__(self):
         #当前用户ID,人脸识别内存变量
-        self.uid =  mp.Value("h",0)
+        self.uid =  mp.Value("h",0)  
         #前后端通讯
         self.sw = mysocket.Mysocket()
         #定义插件间通讯的管道
         self.plugin_conn, self.master_conn = mp.Pipe(False)
-
 
 class pyaudio_obj(Base):
     '''初始化内部使用的对象（主要是导入到语音相关进程中）'''
@@ -72,8 +69,7 @@ class Master(Base):
     '''主控制类'''
 
     def __init__(self):
-        #设备上线&上线状态
-        self.online = device().online()
+        self.yuyin_path = os.path.join(self.config['root_path'], 'data/yuyin')
 
         #设备检测
         self.check = check.Check()
@@ -99,7 +95,7 @@ class Master(Base):
         {
             'state': True,                     返回状态：True 成功 / False 失败
             'data': '想知道吗？你求我呀。',     返回提示语，会显示到前端
-            'type': 'tuling',                   返回类型：tuling 机器人应答 / system 系统应答（包含插件）
+            'type': 'tuling',                  返回类型：tuling 机器人应答 / system 系统应答（包含插件）
             'msg': '图灵回复成功！'             返回类型中文提示语，仅供调试使用
         }
     '''
@@ -217,34 +213,74 @@ class Master(Base):
         )
         self.p4.start()
 
+    # ==========================================
+    
+    #播放没有网络
+    def play_nonet(self):
+        self.public_obj.sw.send_info( {'init':1, 'obj':'mojing','msg': '网络可能有点问题，请检查网络。'} )
+        os.system('aplay -q {0}'.format(os.path.join(self.yuyin_path, "meiyou_wangluo.wav")))
+        return False
+
+    #播放没有初始化
+    def play_noinit(self):
+        self.public_obj.sw.send_info( {'init':1, 'obj':'mojing','msg': '您的设备可能还没有初始化，请配置网络后初始化设备。'} )
+        os.system('aplay -q {0}'.format(os.path.join(self.yuyin_path, "chushihua.wav")))
+        return False
+
+    #播报我已经准备好啦语音
+    def play_yesinit(self):
+        self.public_obj.sw.send_info( {'init':1, 'obj':'mojing','msg': '我已经准备好啦，现在你可以与我互动啦。'} )
+        os.system('aplay -q {0}'.format(os.path.join(self.yuyin_path, "zunbeihaola.wav")))
+        return True
+
+    #开始初始化
+    def start_init(self, i=0):
+        ipadd  = self.mylib.get_localip()
+        u_list = self.data.user_list_get()     #设备用户数（判断是否初始化）
+        if len(ipadd[0])<=1:
+            i += 1
+            if i <= 20:
+                time.sleep(1)
+                return self.start_init(i)
+            else:
+                if self.mylib.is_empty(u_list):
+                    return self.play_noinit()
+                else:
+                    if i <= 30:
+                        time.sleep(1)
+                        return self.start_init(i)
+                    return self.play_nonet()
+
+        online = device().online()
+        if str(online['code'])=='0000':
+            #启动MQTT服务
+            self.start_mqtt()
+            return self.play_yesinit()   #播报我已经准备好啦语音
+        else:
+            i += 1
+            if i <= 60:
+                time.sleep(1)
+                return self.start_init(i)
+            return self.play_nonet()
+
+    # ==============================================
     def main(self):
         #定义唤醒成功内存变量：记录语音进程ID
         self.hx_yuyinpid = mp.Value("h",0)
+
         #定义唤醒成功内存变量：是否唤醒成功
         self.is_snowboy  = mp.Value("h",0)
 
         #启动设备检测
         self.check.main(self.public_obj)
 
+        self.start_init()
+
         #启动唤醒
         self.start_snowboy()
 
         #启动技能
         self.start_skills()
-
-        yuyin_path = os.path.join(self.config['root_path'], 'data/yuyin')
-
-        if str(self.online['code'])=='0000':
-            #启动MQTT服务
-            self.start_mqtt()
-
-            #播报我已经准备好啦语音
-            self.public_obj.sw.send_info( {'init':1, 'obj':'mojing','msg': '我已经准备好啦，现在你可以与我互动啦。'} )
-            os.system('aplay -q {0}'.format(os.path.join(yuyin_path, "zunbeihaola.wav")))
-        else:
-            self.public_obj.sw.send_info( {'init':1, 'obj':'mojing','msg': '您的设备可能还没有初始化，请配置网络后初始化设备。'} )
-            os.system('aplay -q {0}'.format(os.path.join(yuyin_path, "chushihua.wav")))
-
 
         #计时变量
         timeing = 0

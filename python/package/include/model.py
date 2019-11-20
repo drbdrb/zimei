@@ -1,31 +1,30 @@
 # -*- coding: utf-8 -*-
-import sqlite3;
-import json;
+import json
+import sqlite3
 
 class model:
     '''数据库模型类'''
-    dbPath=''
-    dbKey=''
-    datatable=''        #数据表
-    sql ="";            #sql语句
-    wheresql = "";      #条件语句
-    ordersql = "";      #排序语句
-    limitsql = "";      #限制数量语句
-    fields = "*";       #限制返回的字段;
-    def __init__(self, dbPath, dbKey='' ):
-        self.connection = sqlite3.connect(dbPath);    #数据库对象
-        #self.cursor = self.connection.cursor()
-        self.dbPath = dbPath;
-        self.dbKey = dbKey;
+    dbPath = ''
+    dbKey = ''
+    datatable = ''     #数据表
+    sql = ""           #sql语句
+    wheresql = ""      #条件语句
+    ordersql = ""      #排序语句
+    limitsql = ""      #限制数量语句
+    fields = "*"       #限制返回的字段
 
+    def __init__(self, dbPath, dbKey='' ):
+        self.connection = sqlite3.connect(dbPath)    #数据库对象
+        self.dbPath = dbPath
+        self.dbKey = dbKey
 
     def resetparame(self):         #重置所有参数
-        self.datatable = "";
-        self.sql ="";           #sql语句
-        self.wheresql = "";     #条件语句
-        self.ordersql = "";     #排序语句
-        self.limitsql = "";     #限制数量语句
-        self.fields = "*";      #限制返回的字段;
+        self.datatable = ""
+        self.sql =""           #sql语句
+        self.wheresql = ""     #条件语句
+        self.ordersql = ""     #排序语句
+        self.limitsql = ""     #限制数量语句
+        self.fields = "*"      #限制返回的字段;
 
 
     #---------------------------------------
@@ -34,19 +33,19 @@ class model:
      * 数据格式:json/table
     '''
     def checkjson(self, jsonstr ):               #传入的数据如果是字典那么返回该字典数据不是就返回False
-        json={};
+        json={}
         if self.typeof(jsonstr)!='dict':
             try:
-                json = json.loads( jsonstr );   #将字符串json转换字典对象
+                json = json.loads( jsonstr )   #将字符串json转换字典对象
             except:
                 json = ''
         else:
-            json = jsonstr;
+            json = jsonstr
 
         if (len(json)>0):
-            return json;
+            return json
         else:
-            return False;
+            return False
 
     def typeof(self, variate):                   #检测类型模块，在返回类型
         type1 = ""
@@ -78,14 +77,14 @@ class model:
         for row in rs:
             line_arr={}
             for i in range(len(col_list)):
-                line_arr[col_list[i]] = row[i];                     #添加到字典
+                line_arr[col_list[i]] = row[i]                     #添加到字典
             tab.append(line_arr)
         return tab                                                  #返回了列表
 
 
     def table(self, datatab ):                                      #输入表名,输出self，且具有连贯操作
-        self.datatable = datatab;
-        return self;
+        self.datatable = datatab
+        return self
 
     #查询条件转换
     '''
@@ -98,7 +97,7 @@ class model:
         aa = db.table("Options").where(tab).sel();
     '''
     def wheresw(self, k, v):                #数据库读取添加等等操作时进行条件过滤#'key','clientid'
-        val = v[1];                         #
+        val = v[1]                         #
         whereTab = {
             'EQ': k +"='"+ val +"'",      #等于
             'NEQ': k +"<>'"+ val +"'",    #不等于
@@ -111,25 +110,25 @@ class model:
             'IN': k +" IN "+val,          #IN 查询
             'NOTBETWEEN': k +" NOT BETWEEN "+val,
             'NOTIN': k +" NOT IN "+val
-        };
-        vv = v[0].upper();              #字母转换为大写
-        restr = whereTab[vv];
-        return restr;
+        }
+        vv = v[0].upper()              #字母转换为大写
+        restr = whereTab[vv]
+        return restr
 
 
-    def where(self, tab='' ):                               #where条件 假如是{'key':'clientid'}
-        if len(tab)<=0: return self;                        #（1）不传值那么返回self
-        elif self.typeof(tab)=="str":                       #（2）如果是字符串
-            self.wheresql = " WHERE " + tab;                #条件语句self.wheresql=WHERE+字符串
+    def where(self, tab='' ):                              #where条件 假如是{'key':'clientid'}
+        if len(tab)<=0: return self                        #（1）不传值那么返回self
+        elif self.typeof(tab)=="str":                      #（2）如果是字符串
+            self.wheresql = " WHERE " + tab                #条件语句self.wheresql=WHERE+字符串
         else:
-            datatab = self.checkjson( tab );                #（3）self.checkjson检测提交的数据是否正确
+            datatab = self.checkjson( tab )                #（3）self.checkjson检测提交的数据是否正确
                                                             ##传入的数据如果是字典那么返回该字典数据不是就返回False
             if datatab==False:
-                return False;                               #检测出不是字典那么直接返回 false
+                return False                               #检测出不是字典那么直接返回 false
 
-            sql = '';                                       #如果传入的是字典类型的数据
+            sql = ''                                       #如果传入的是字典类型的数据
             for k in datatab:                               #循环输出字典datatab数据k=key
-                sql1 = "";
+                sql1 = ""
                 if self.typeof(datatab[k]) == 'list':        #datatab字典里的数据如果是列表### {'key':'clientid'}
                     sql1 = self.wheresw(k,datatab[k])      #'key','clientid'#!!!!
                 elif self.typeof(datatab[k]) == "int":
@@ -138,41 +137,41 @@ class model:
                     sql1 = k + "='"+ datatab[k] +"'"       #key='clientid'
 
 
-                sql += sql1 +" AND ";                       #sql='clientid' AND
+                sql += sql1 +" AND "                       #sql='clientid' AND
 
-            sql = sql.rstrip(" AND ");                      #sql按照要求去掉尾巴（AND）得到sql='clientid'
-            self.wheresql = " WHERE " + sql;                #self.wheresql =WHERE key='clientid'
-        return self;                                        #无论何值都返回self，支持连贯操作
+            sql = sql.rstrip(" AND ")                      #sql按照要求去掉尾巴（AND）得到sql='clientid'
+            self.wheresql = " WHERE " + sql                #self.wheresql =WHERE key='clientid'
+        return self                                        #无论何值都返回self，支持连贯操作
 
 
     def order(self, str ):               #生成排序语句
-        self.ordersql = " ORDER BY " + str;
-        return self;
+        self.ordersql = " ORDER BY " + str
+        return self
 
 
     def limit(self, start, ends=""):     #限制结果数量
-        if (start==False): start = "1";
-        if ends !="": ends = "," + ends;
-        self.limitsql = " LIMIT " + start + ends;
-        return self;
+        if (start==False): start = "1"
+        if ends !="": ends = "," + ends
+        self.limitsql = " LIMIT " + start + ends
+        return self
 
 
     def field(self, strs):               #获取指定字段
         if self.typeof(strs)=="str":
-            self.fields = strs;
+            self.fields = strs
         else:
             self.fields = "*"
-        return self;
+        return self
 
 
     def find(self):                      #返回单条记录
 
-        sql = "SELECT " + self.fields + " FROM "+ self.datatable;       #fields = "*"; 限制返回的字段。#datatable='' 是数据表
-        if self.wheresql !="" : sql += self.wheresql;                    #" WHERE " + tab;
-        if self.ordersql !="" : sql += self.ordersql;
-        sql += " LIMIT 1";
-        datatab = self.getTable( sql );
-        self.resetparame();
+        sql = "SELECT " + self.fields + " FROM "+ self.datatable       #fields = "*"; 限制返回的字段。#datatable='' 是数据表
+        if self.wheresql !="" : sql += self.wheresql                    #" WHERE " + tab;
+        if self.ordersql !="" : sql += self.ordersql
+        sql += " LIMIT 1"
+        datatab = self.getTable( sql )
+        self.resetparame()
         if datatab:
             return datatab
         else:
@@ -180,12 +179,12 @@ class model:
 
 
     def sel(self):                          #查询,多条
-        sql = "SELECT " + self.fields + " FROM "+ self.datatable;
-        if self.wheresql !="": sql += self.wheresql;
-        if self.ordersql !="": sql += self.ordersql;
-        if self.limitsql !="": sql += self.limitsql;
-        rs = self.getTable(sql);
-        self.resetparame();             #初始化
+        sql = "SELECT " + self.fields + " FROM "+ self.datatable
+        if self.wheresql !="": sql += self.wheresql
+        if self.ordersql !="": sql += self.ordersql
+        if self.limitsql !="": sql += self.limitsql
+        rs = self.getTable(sql)
+        self.resetparame()             #初始化
         if rs:
             return rs
         else:
@@ -193,28 +192,28 @@ class model:
 
 
     def count(self):                        #查询数量
-        sql = "SELECT COUNT(" + self.fields + ") AS num FROM "+ self.datatable;
-        if (self.wheresql !=""): sql += self.wheresql;
-        if (self.ordersql !=""): sql += self.ordersql;
-        if (self.limitsql !=""): sql += self.limitsql;
-        rs = self.getTable(sql);
-        self.resetparame();
-        return rs!='' if rs[1]["num"] else "0";
+        sql = "SELECT COUNT(" + self.fields + ") AS num FROM "+ self.datatable
+        if (self.wheresql !=""): sql += self.wheresql
+        if (self.ordersql !=""): sql += self.ordersql
+        if (self.limitsql !=""): sql += self.limitsql
+        rs = self.getTable(sql)
+        self.resetparame()
+        return rs!='' if rs[1]["num"] else "0"
 
 
     def add(self, tab ):                    #添加数据
-        datatab = self.checkjson( tab );
-        if (datatab==False): return False;
-        instr1 = "";
-        instr2 = "";
+        datatab = self.checkjson( tab )
+        if (datatab==False): return False
+        instr1 = ""
+        instr2 = ""
         for k in datatab:
-            instr1 +=  k +  ",";
-            instr2 +=  "'" + str(datatab[k]) + "',";
+            instr1 +=  k +  ","
+            instr2 +=  "'" + str(datatab[k]) + "',"
 
-        instr1 = instr1.rstrip(",");
-        instr2 = instr2.rstrip(",");
-        sql = "INSERT INTO "+ self.datatable +" ("+ instr1 +") VALUES ("+ instr2 +");";
-        return self.run( sql );
+        instr1 = instr1.rstrip(",")
+        instr2 = instr2.rstrip(",")
+        sql = "INSERT INTO "+ self.datatable +" ("+ instr1 +") VALUES ("+ instr2 +");"
+        return self.run( sql )
 
     #---------------------------------------------------------------------
     '''
@@ -223,32 +222,31 @@ class model:
     缺陷。 未对WHERE 语句进行 转义
     '''
     def save(self, tab ):
-        datatab = self.checkjson( tab );    #检测是否为字典类型
-        if (datatab==False): return False;
+        datatab = self.checkjson( tab )    #检测是否为字典类型
+        if (datatab==False): return False
 
-        upsql = "UPDATE "+ self.datatable +" SET ";
-        setsql = "";
+        upsql = "UPDATE "+ self.datatable +" SET "
+        setsql = ""
         for k in datatab:
-            setsql += k +  "='" + str(datatab[k]) + "',";
-        setsql = setsql.rstrip(",");
+            setsql += k +  "='" + str(datatab[k]) + "',"
+        setsql = setsql.rstrip(",")
 
-        upsql += setsql;
+        upsql += setsql
         if self.wheresql!="":
-            upsql += self.wheresql;
-            ret = self.run( upsql );
+            upsql += self.wheresql
+            ret = self.run( upsql )
             if ret:
-                return True;
+                return True
             else:
-                return False;
+                return False
         else:
-            return False;
-
+            return False
 
     def setField(self, upkey, upval=''):    # 快速设置字段值
-        datatab = self.checkjson( upkey );
+        datatab = self.checkjson( upkey )
 
-        upsql = "UPDATE "+ self.datatable +" SET ";
-        setsql = "";
+        upsql = "UPDATE "+ self.datatable +" SET "
+        setsql = ""
         if (datatab==False):
             if self.typeof(upkey)=="str" and upval!='':
                 setsql = upkey +"='"+ str(upval) +"'"
@@ -256,30 +254,30 @@ class model:
                 return False
         else:
             for k in datatab:
-                setsql += k +  "='" + str(datatab[k]) + "',";
-            setsql = setsql.rstrip(",");
+                setsql += k +  "='" + str(datatab[k]) + "',"
+            setsql = setsql.rstrip(",")
 
-        upsql += setsql;
+        upsql += setsql
         if self.wheresql!="":
-            upsql += self.wheresql;
-        ret = self.run( upsql );
+            upsql += self.wheresql
+        ret = self.run( upsql )
         if ret:
-            return True;
+            return True
         else:
-            return False;
+            return False
 
 
     def delete(self):                               #删除
-        sql = "DELETE FROM "+ self.datatable;
-        if self.wheresql!="": sql += self.wheresql;
-        return self.run( sql );
+        sql = "DELETE FROM "+ self.datatable
+        if self.wheresql!="": sql += self.wheresql
+        return self.run( sql )
 
 
     def run(self, sql ):                            #执行
-        newsql = sql;
+        newsql = sql
         cursor = self.connection.cursor()
-        self.resetparame();
-        exe = cursor.execute( newsql );
+        self.resetparame()
+        exe = cursor.execute( newsql )
         self.commitTrans()
         cursor.close()
         return exe
@@ -287,13 +285,13 @@ class model:
 
     def close(self):            #关闭数据库
         #self.cursor.close();
-        self.connection.close();
+        self.connection.close()
 
 
     def truncate(self):       #清空表格所有记录
         if (self.datatable==False):return False
         cursor = self.connection.cursor()
-        re = cursor.execute("DELETE FROM %s",self.datatable);
+        re = cursor.execute("DELETE FROM %s",self.datatable)
         cursor.close()
         return re
 
@@ -301,14 +299,14 @@ class model:
     def drop(self):     #删除表格
         if (self.datatable==False):return False
         cursor = self.connection.cursor()
-        re = cursor.execute("DROP TABLE %s",self.datatable);
+        re = cursor.execute("DROP TABLE %s",self.datatable)
         cursor.close()
         return re
 
 
     def vacuum(self):       #压缩数据库
         cursor = self.connection.cursor()
-        cursor.execute("VACUUM");
+        cursor.execute("VACUUM")
         cursor.close()
 
 

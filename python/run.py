@@ -5,6 +5,7 @@ import os
 import re
 import sys
 import time
+import package.init as init
 
 this_path = os.path.dirname(os.path.dirname(__file__))
 task_main       = 'main.py'                         #后端任务
@@ -58,10 +59,7 @@ def start(run_file, cmdtype ='system'):
 
 #启动Mojing前端
 def start_mojing_app(is_debug=""):
-    #麦克风利用率100%
-    #os.system("sudo amixer set Capture 80%")
-    #os.system("sudo amixer set PCM 90%")
-
+    init.systeminit(this_path).main()
     while True:
         is_task_mojing = ps_ax(task_mojing)
         if is_task_mojing == False:
@@ -101,5 +99,5 @@ if __name__ == '__main__':
     runres = pat.findall(out)
     if len(runres) > 1:
         exit()
-
+        
     start_mojing_app(is_debug)

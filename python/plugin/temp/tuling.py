@@ -137,7 +137,7 @@ class Tuling(Base,Plugin):
                     if data == '': data = "不知道"
                     del res,page,url,html
 
-                    return {'state':True,'data':data ,'type':'tuling','msg':'对话机器人回复成功！','stop': is_stop}
+                    return {'state':True,'data':data ,'type':'tuling','msg':'对话机器人回复成功！','stop': True}
                 else:
                     return {'state':False,'data':'我想不出来。','type':'system','msg':'服务器返回的不是字典！'}
             else:

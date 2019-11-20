@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 # -*- coding: UTF-8 -*-
-import os,time
-import re
 import difflib
+import os
+import re
+import time
 
 class Wificore():
     """核心配置类"""
@@ -46,7 +47,7 @@ class Wificore():
 
         # 结束所有create_ap相关的进程
         taskcmd = 'ps ax | grep create_ap'
-        out = os.popen(taskcmd).readlines();               # 检测是否已经运行
+        out = os.popen(taskcmd).readlines()               # 检测是否已经运行
         for line in out:
             pat = re.compile(r'(\d+)\s+\?\s+S\s+\d')
             res = pat.findall(line)
@@ -112,9 +113,7 @@ class Wificore():
     '''
     def test_network(self):
         cmd = 'sudo wpa_cli -i '+ self.wlan +' status'
-        print('test_network',cmd)
         fdata = os.popen(cmd).read()
-        print('test_network',fdata)
 
         regExp = r'wpa_state\=COMPLETED'
         res = re.search( regExp, fdata, re.M|re.I)
@@ -141,7 +140,7 @@ class Wificore():
 
     #重启网络
     def restart_network(self):
-        os.system('sudo wpa_supplicant -B w -D wext -i '+self.wlan+' -c '+ self.sys_supplicant);
+        os.system('sudo wpa_supplicant -B w -D wext -i '+self.wlan+' -c '+ self.sys_supplicant)
         os.system('sudo wpa_cli -i '+self.wlan+' reconfigure')
         os.system('sudo wpa_cli -i '+self.wlan+' select_network 0')
         os.system('sudo wpa_cli -i '+self.wlan+' enable_network 0')
@@ -178,8 +177,8 @@ class Wificore():
         if int(scanssid)==1:
             scan_ssid = '\tscan_ssid=1\n'
 
-        restr = r'network\s*=\s*{\n*\s*ssid\s*=\s*"'+ wifiname +'"\n+.*psk\s*=\s*"(.+)"\n[:ascii:\n]*\n*}'
-
+        restr = r'network\s*=\s*{\n*\s*ssid\s*=\s*"'+ wifiname +r'"\n+.*psk\s*=\s*"(.+)"\n[:ascii:\n]*\n*}'
+        
         matc = re.search(restr, fstr, flags=re.M|re.I )
         #print( matc )
         if matc!=None:

@@ -4,7 +4,6 @@ import os
 import re
 import package.master as master  # 主控制
 
-
 # 设置默认声卡
 def set_soundcard():
     cardtext = os.popen("aplay -l").read()

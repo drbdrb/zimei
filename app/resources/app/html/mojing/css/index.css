@@ -1,0 +1,222 @@
+@font-face {font-family: 'CourierNewBold';src: url('../../Public/font/Courier_New_Bold.ttf');}
+@font-face {font-family: 'consola';src: url('../../Public/font/consola.ttf');}
+@font-face {font-family: 'impact';src: url('../../Public/font/impact.ttf');}
+
+html {font-size: 10px;}
+@media only screen and (min-width: 401px){html {font-size: 10px !important;}}
+@media only screen and (min-width: 428px){html {font-size: 16px !important;}}
+@media only screen and (min-width: 500px){html {font-size: 20px !important;}}
+@media only screen and (min-width: 800px){html {font-size: 25px !important;}}
+
+.container-fluid{width:100%;height:100%; position: fixed;}
+.bujv{float:left;width:50%;}
+
+/*前端窗口样式设置 Start
+ * background: #160D2A url('../img/system/splash.png') no-repeat center 0;  --  有一行是有背景图片，适合做常规展示类的
+ * background: #000000;     --  这种写法是将背景直接变成纯黑色，适合做魔镜类产品
+**/
+body{
+    /*background: #160D2A url('../img/system/splash.png') no-repeat center 0;*/
+    background: #000000;
+    color: #e4e4e4;
+    font-size: 10px;
+}
+/*============ END ===============*/
+
+/*全局可用样式*/
+.font_base{font-size: 0.7rem;line-height: 0.7rem;}  /*基本字体*/
+.pos_abs{position:absolute;}
+.fl{float: left;}
+.fr{float: right;}
+.cr{clear: both;}
+
+.pos_left{top:0px;left:0px;}
+.pos_right{top:0px;right:0px;}
+
+
+/*日期-时间*/
+.date-time{width:10.0rem}
+.day{padding-top: 0.2rem;}
+
+.day-top{position: relative;width:100%;text-align: center;}
+#year,#month{font-size:0.88rem;line-height:1.0rem;font-weight: bold;}
+#year:after{content:" 年";padding: 0 0.1rem 0 0rem;}
+#month:after{content:" 月"}
+
+.yingli{height: 1.6rem;}
+.yl-div{float: left}
+.yl-div #yl_date{display: block;font-size: 0.8rem;text-align: center;line-height: 120%;font-weight: bold;}
+.yl-div #yl_year{display: block;font-size: 0.5rem;text-align: center;line-height: 120%;}
+
+#date{font-size:5.0rem;display: block;margin: 0 auto;text-align: center;line-height: 100%;font-family: "impact";}
+.week{float: right;text-align: right;}
+#week{
+    display: block;
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-top: 0.5rem;
+}
+
+/*时间相关*/
+#hours,#minutes,#seconds{border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 10%;
+    background-color: rgba(255,255,255,0.2);
+    width: 2.6rem;
+    height: 2.0rem;
+    line-height: 2.0rem;
+    overflow: hidden;
+    display: inline-grid;
+    text-align: center;
+}
+#hours-fh,#minutes-fh{width:0.2rem;display: -webkit-inline-box;}
+
+.clock{font-size:1.8rem;line-height:1.8rem; text-align: center;height:2.2rem}
+.clock code{font-family: "Courier New";font-weight: bold;}
+.clock span{margin-left: -10px;}
+
+/*宜忌*/
+.yiji{margin:0.05rem auto 0 auto;width: 10.0rem;padding: 0px;}
+.yiji .kuan{float: left;width:100%}
+
+.yiji .yi,.yiji .ji{width:100%;list-style: none;display: flow-root;margin: 0px;padding: 0px;}
+.yiji .yi dt,.yiji .ji dt{
+	float: left;
+	width: 10%;
+    font-size: 0.5rem;
+    margin: 0.08rem;
+    text-align: center;
+    line-height: 0.65rem;
+}
+.yiji .yi dt{border: 0.01rem solid #7cfc00;color: #7cfc00;}
+.yiji .ji dt{border: 0.01rem solid #fc0000;color: #fc0000;}
+
+.yiji .yi dd,.yiji .ji dd{float: left; font-size: 0.5rem;line-height: 0.6rem;overflow: hidden;width: 85%;height: 0.5rem;}
+
+/*城市*/
+#city{font-size: 0.7rem;line-height: 1.0rem;text-align: right;border-bottom: 0.1rem solid rgba(51, 255, 0, 0.48);}
+#city .uptime{font-size: 0.5rem;}
+
+/*天气*/
+.weather{width:8.0rem}
+
+/*天气图标*/
+.weatico i{background-position: top center;background-repeat: no-repeat;background-size: contain;}
+
+/*实时天气*/
+.real_time{}
+.real_time .weatico i{background-size:100% 100%}
+
+/*天气*/
+.real_time .tianqi{width:40%;height:100%}
+.real_time .tianqi i{display: -webkit-inline-box; width: 100%;height: 3.0rem;}
+.real_time .tianqi span{width:100%;display: block;text-align: center;font-size: 0.7rem;}
+
+/*体*/
+.real_time .tg_feng{width:59%;}
+.tg_feng .fend{font-size: 0.7rem;line-height: 0.7rem;padding-top: 0.28rem;}
+
+.real_time .tigang{text-align: right;}
+.real_time .tigang b{float: right;
+    font-size: 0.5rem;
+    width: 1.0rem;
+    line-height: 0.6rem;
+    margin-top: 1.3rem;
+    text-align: right;}
+.real_time .tigang span{font-size: 2.0rem;line-height:1.2rem;float: right;margin-top: 1.0rem;}
+
+/*室外*/
+.shiwai{top:0.1rem; font-size: 0.5rem;width:99.5%;}
+.shiwai.kuan{
+	border: 1px solid rgba(255, 255, 255, 0.30);
+	border-radius: 0px;
+	background-color: rgba(255, 255, 255, 0.15);
+	box-shadow: 0 0 10px 6px rgba(27, 27, 27, 0.14);
+}
+
+.shiwai .title{width: 3.8rem;}
+
+.shikuan{line-height:0.9rem;margin-top: 0.5rem;padding: 0.1rem;}
+.shikuan b{font-weight: normal;
+font-weight: normal;
+    border: 1px solid #eee;
+    border-radius: 3px;
+    padding: 1px;
+    font-size: 0.4rem;
+    background: #ffffff40;
+    margin-right: 0.2rem;
+}
+.shikuan .wendu{width:50%}
+.wendu span{font-size: 1.1rem;top: 1.0rem;}
+.wendu span:after{content: "℃";
+    font-size: 50%;
+    position: relative;
+    top: -0.5rem;
+    left: 0.1rem;
+}
+
+.shikuan #sw_shidu{font-size: 1.1rem;top: 1.0rem;}
+
+.shikuan #sw_shidu:after{content: "%";
+    font-size: 50%;
+    position: relative;
+    left: 0.1rem;
+}
+.shikuan .ganmao{font-size: 0.45rem;line-height:150%;height:2.0rem}
+
+/*生活指数*/
+.life{}
+.life dl{list-style: none;clear: both;float: left;width: 100%;padding: 0px;}
+
+.life dt,.life dd,.life ul,.life li{list-style: none;float: left;}
+.life dt{width: 2.6rem;font-size: 0.4rem;line-height: 0.75rem;}
+.life ul{}
+.life li{display: flex;height:0.5rem}
+.life li.brf_text{padding-left: 0.1rem;line-height: 120%;}
+
+/*24小时预报*/
+.hourly{display: block;padding-top: 0.2rem;}
+.hourly .hh{float: left;font-size: 0.30rem;}
+.hourly .hh ul,.hourly .hh ul li{list-style: none;padding: 0px;margin:0.1rem 0px 0px 0px;}
+.hourly .hh li{line-height: 0.5rem;width: 1.0rem;text-align: center;clear: both;font-size: 0.35rem;}
+.hourly .hh i{display: block;height: 0.9rem;width:0.9rem;margin: 0px auto;background-position: center center !important;}
+
+
+.doutian{
+	display: block;
+    width: 100%;
+    margin-top: 0.2rem;
+}
+.doutian.kuan{border: 1px solid rgba(255, 255, 255, 0.49);}
+
+.hourly h3,.doutian h3,.life h3{font-weight: normal; font-size: 0.5rem;line-height: 1.0rem;border-bottom: 0.06rem solid rgba(255, 255, 255, 0.68);}
+
+.doutian dl{
+	list-style: none;
+    clear: both;
+    float: right;
+    width: 100%;    
+    padding: 0px;
+}
+.doutian dl.kuan{
+	border-top: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 0px;
+    background-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 10px 6px rgba(27, 27, 27, 0.14);
+}
+
+.doutian dt,dd{float: left;padding: 3px 0px;}
+.doutian dt{width:2.2rem;height:0.8rem;font-size:0.45rem; text-align: left;line-height:1.0rem}
+.doutian dt span{font-size:0.4rem;}
+.doutian dl i{display: block;height: 1.0rem;width:1.4rem;float: left;}
+.doutian ul{
+	list-style: none;
+    list-style-type: none;
+    display: initial;
+    margin-left: 0.15rem;
+    overflow: hidden;
+}
+.doutian ul li{
+	display: inline-block;
+    font-size: 0.5rem;
+    line-height: 1.0rem;
+}

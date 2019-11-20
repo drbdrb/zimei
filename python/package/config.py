@@ -7,22 +7,13 @@ config = {
     'httpapi': 'https://hapi.16302.com',
     'database':'',
 
-    # MQTT 配置定义，这里只是作初始化，具体定义在 package/data.py 里将重置
     'MQTT':{
         'server': 'mqtt.16302.com',
-        'port': 1883,
-        'clientid':'客户端ID',
-        'mqttname':'账号',
-        'mqttpass':'密码'
+        'port': 1883
     },
 
     #硬件管脚定义
     'GPIO':{
-        'pingmo_kg': 37,        #开关屏幕控制脚
-        'pingmo_zt': {
-            'pin': 33,          #获取屏幕状态脚
-            'open': 1           #屏幕开的状态，电平值：1 高电平 0 低电平
-        },        
         'fengshan_kg': 13,      #降温风扇开关控制脚，0 -- 为关闭此功能
         'deng_kg': 11,          #装饰灯控制脚
         'setnet_pin': 31,       #配网控制按钮脚
@@ -68,12 +59,13 @@ config = {
                 "client_secret" : "RDOdZUF3KXawMAKWgMgrrGqrl9FKeAvG"
             }
         }
-    },
-
-    #摄像头
-    "CAMERA":{
-        'enable' : True         # 是否启用 ： True -- 启用，False -- 禁用
     }
 }
 
 config['database'] = config['root_path'] + '/data/config.db'            #数据库
+newconfig={}
+from data.config import newconfig
+config.update(newconfig)
+
+# import json
+# print( json.dumps(config,indent=4) )

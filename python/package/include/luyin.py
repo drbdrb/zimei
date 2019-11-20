@@ -29,14 +29,14 @@ class Luyin():
 
             def record_to_file( data, sample_width):
                 #“从麦克风记录并输出结果数据到‘path’”
-                # sample_width, data = record()
+               # sample_width, data = record()
                 data = p_self.pack('<' + ('h' * len(data)), *data)
-                #wf = p_self.wave.open("/var/www/server/python/data/yuyin/wo.wav", 'wb')
-                #wf.setnchannels(1)
-                #wf.setsampwidth(sample_width)
-                #wf.setframerate(p_self.RATE)
-                #wf.writeframes(data)
-                #wf.close()
+                # wf = p_self.wave.open("/keyicx/python/data/yuyin/wo.wav", 'wb')
+                # wf.setnchannels(1)
+                # wf.setsampwidth(sample_width)
+                # wf.setframerate(p_self.RATE)
+                # wf.writeframes(data)
+                # wf.close()              
                 return data
 
 

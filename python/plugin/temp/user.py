@@ -7,6 +7,7 @@ import package.mymqtt as mymqtt
 from package.base import Base  # 基本类
 from plugin import Plugin
 from package.include.opencv import Opencv        #人脸离线识别
+import package.include.baiduapi.contrast as contrast  #人脸在线对比
 
 class User(Base,Plugin):
     '''用户管理插件'''
@@ -18,7 +19,7 @@ class User(Base,Plugin):
     #打开绑定信息
     def user_openbind(self, postjson):
         clientid = self.config['httpapi']+'/'+ self.config['MQTT']['clientid']
-        nav_json = {"event":"open","size":{"width":380,"height":380},"url":"bind_user.html?qr="+ clientid }
+        nav_json = {"event":"open","size":{"width":380,"height":380},"url":"Public/bind_user.html?qr="+ clientid }
         self.public_obj.sw.send_nav( nav_json )
         return {'state':True,'data': "设备绑定功能已启动，你现在可以打开微信小程序开始绑定设备了",'msg':'','type':'system','stop':True}
 
@@ -59,7 +60,7 @@ class User(Base,Plugin):
             self.Mqtt.send_admin('xiaocx', 'USER_REG', re_json )
             return
 
-        if self.config['CAMERA']['enable']==False:
+        if self.config['CAMERA']['enable']=='0':
             '''系统配置为不启用摄像头'''
             self.public_obj.sw.send_nav({"event" : "close"})                 #取消显示二维码导航消息
             re_json = {"code":'0003', "msg":'系统配置为不启用摄像头'}
@@ -71,7 +72,11 @@ class User(Base,Plugin):
         ding_wav = os.path.join(self.config['root_path'], "data/snowboy/ding.wav")
 
         def success(is_succ):
-            if is_succ:
+
+            if is_succ and contrasts.main( temp_photo, temp_photo ) >80:
+            
+                opencv.close()
+                
                 postup = {'facepath':temp_photo}
                 self.data.user_up( uid, postup )
                 os.popen("sudo aplay -q "+ ding_wav )
@@ -80,30 +85,25 @@ class User(Base,Plugin):
                 self.public_obj.sw.send_nav({"event" : "close"})
                 re_json = {"code":'0003', "msg":'人脸图像已经保存成功'}
                 self.Mqtt.send_admin('xiaocx', 'USER_REG', re_json )
-            else:
-                start_video()
+
 
         opencv = Opencv()
-        opencv.success = success
+        opencv.success = success        
+        contrasts = contrast.Contrast_face()  #人脸在线对比
 
-        fier_file  = os.path.join(self.config['root_path'], "data/shijue/haarcascade_frontalface_default.xml")
+        
 
-        param = {
-            'temp_file': temp_photo,
-            'fier_file':{
-                'file': fier_file,
-                'scaleFactor': 1.2,        #多少倍
-                'minNeighbors': 20,        #对比多少次
-                'minSize': (40, 40)
-            },
-            'show_win':  {
-                "is_show":  True,
-                "is_focus": True,
-            }
-        }
-            
+ 
         def start_video():
-            opencv.main_video( param )
+            fier_file  = os.path.join(self.config['root_path'], "data/shijue/haarcascade_frontalface_default.xml")
+            
+            fier_file = [{'file':fier_file,'scaleFactor': 1.2,'minNeighbors': 5,'minSize': (40,40)}]
+            
+            window    = {'name':'Facerecognition','size':(640,480),'is_focus':(300,300),'is_capture': 1}
+            
+            save      = {'type': 3,'color': 1}
+            
+            opencv.main_video(temp_file=temp_photo,fier_file =fier_file,window =window  ,save=save,camera_angle = 0,thre = 0.5  )  
 
         start_video()
 

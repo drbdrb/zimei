@@ -212,9 +212,10 @@ class Device(Base,Plugin):
 
                 #天气预报默认城市信息
                 data_config = self.data.getconfig()
+                location = data_config['LOCATION']
                 weathcity = {
-                    'city': str(data_config['city']),
-                    'city_cnid': str(data_config['city_cnid'])
+                    'city': str(location['city']),
+                    'city_cnid': str(location['city_cnid'])
                 }
 
                 body_json = {

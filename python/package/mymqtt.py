@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-# -*- coding: utf-8 -*-
 import json
 import sys
 import time
@@ -18,7 +16,7 @@ class Mymqtt():
     def __init__(self, config ):
         self.bao = config['MQTT']
         self.__host = self.bao["server"]            # mqtt.16302.com
-        self.__port = self.bao["port"]              # 1883
+        self.__port = int(self.bao["port"])              # 1883
         self.__clientid = self.bao["clientid"]      # 设备id
         self.__mqtt_name = self.bao["mqttname"]     # 用户名
         self.__mqtt_pass = self.bao["mqttpass"]     # 密码

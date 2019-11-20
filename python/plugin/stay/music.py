@@ -44,13 +44,11 @@ class Qqmusic(Base):
         url       = this_play['url']
         md5_fname = this_play['hashname']
         mp3_file  = os.path.join(self.music_cache, md5_fname +'.wav')
-
-        if os.path.exists(mp3_file)==False:
+        #检测缓存音乐是否存在，和文件大小是否正常。
+        if os.path.exists(mp3_file)==False or self.filesize(mp3_file)<2527360:
             if key==0 and this_play_id ==0:
-       
                 front_end( {'obj':'mojing','msg':'正在缓冲歌曲，请稍候……'})    
                 os.popen("sudo aplay "+ os.path.join(self.config['root_path'], "data/yuyin/Buffering.wav"))
-        
         
             result    = urlparse( url )
             m4afile   = result.path
@@ -93,7 +91,15 @@ class Qqmusic(Base):
             front_end( {'obj':'mojing','msg':'正在播放:'+ name[hashname]})
         except:
             pass
-        
+
+    # 获取文件大小
+    def filesize(self,path):
+        try:
+            return os.path.getsize(path)
+        except:
+            #如果文件不存在返回正常以上的文件大小
+            return 100000000000
+              
     #播放音乐
     def play_music(self):
         global this_play_id
@@ -143,7 +149,7 @@ class Qqmusic(Base):
                 break
             i += 1
 
-        if is_file:
+        if is_file :
             return is_file,i
         elif i > 0:
             return self.cache_music(play_list, 0), 0
@@ -215,8 +221,6 @@ class Qqmusic(Base):
 
 
 
-
-
 # ==================================================================================================
 
 class Music(Plugin,Base):
@@ -241,38 +245,25 @@ class Music(Plugin,Base):
         self.p2.start()
         
 
-
     #插件入口
     def start(self, enobj):
-
         #print('插件入口',enobj, enobj['data'] )
         self.this_list_name = enobj['data']
         self.wai_conn.send({"control":"play"})
      
     #插件等待（暂时停止）控制
-    def pause(self):
+    def pause(self, *enobj):
         self.wai_conn.send({"control":"pause"})
 
     #插件继续
     def resume(self, enobj={}):
-
-
         if str(self.this_list_name) != str(enobj['data']) and enobj['name']=='Music':
             self.wai_conn.send({"control":"unpause","newlist":1})
             self.this_list_name = enobj['data']
-           
-
         elif enobj["trigger"] in ["下一曲","下一个","下一首"]:
-
             self.wai_conn.send({"control":"next"})
-     
-
-
         elif enobj["trigger"] in ["上一曲","上一个","上一首"]:
-
             self.wai_conn.send({"control":"previous"})
-        
-
         else:
             #继续播放
             self.wai_conn.send({"control":"unpause","newlist":0})

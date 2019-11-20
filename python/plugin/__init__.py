@@ -10,7 +10,7 @@ class Plugin():
         pass
 
     #插件等待（暂时停止）
-    def pause(self):
+    def pause(self, *enobj):
         #print('执行了 插件默认暂停pause 方法---------')
         pass
 

@@ -83,11 +83,11 @@ class Luyin_shibie(Base):
     def stop_aplay(self):
         taskcmd = 'ps ax | grep aplay' 
         out = os.popen(taskcmd).read()               # 检测是否已经运行
-        pat = re.compile(r'(\d+)\s+pts.+aplay.+\/python\/runtime\/hecheng\/')
+        pat = re.compile(r'(\d+)\s+.+aplay.+\/python\/runtime\/hecheng\/',re.M|re.I)
         res = pat.findall(out)
         for x in res:
             cmd = 'sudo kill -9 '+ str(x)
-            os.popen(cmd)
+            os.system(cmd)
 
     '''
     语音录音主函数

@@ -127,8 +127,13 @@ set_path_chmod()
 ---------------------------------------------------------
 '''
 # 创建新表
-def CreateTables( db_arr = [] ):
+def CreateTables():
     print_str("创建系统默认数据库" ,'n','n')
+
+    db_arr = [
+        'update config set value="" where (key="clientid" or key="mqttname" or key="mqttpass" or key="mqttdevid")',
+        'delete from user_list'
+    ]
     if len(db_arr) <= 0 :
         print_str("跳过",'p')
         return
@@ -136,7 +141,7 @@ def CreateTables( db_arr = [] ):
     filename = time.strftime("%Y%m%d%H%M%S", time.localtime())
     old_data = os.path.join(root_path, 'python/data/config.db')
     mov_data = os.path.join(root_path, 'python/data/config_'+ str(filename) +'.db')
-    os.system( 'sudo mv '+ old_data +' '+ mov_data )
+    os.system( 'sudo cp '+ old_data +' '+ mov_data )
 
     conn = sqlite3.connect(old_data)
     cur = conn.cursor()
@@ -148,20 +153,14 @@ def CreateTables( db_arr = [] ):
             print_str( e, 'w')
 
     conn.commit()
+    cur.close()
     conn.close()
     os.system("sudo chmod 777 "+ old_data)
 
     print_str("[完成]",'p')
 
-
-create_table = []
-
-#=[CreatedatabaseStart]=
-create_table=['CREATE TABLE "config" ("key" TEXT(20),"value" TEXT(20),"nona" TEXT(200));', 'CREATE TABLE "nmap_config" ("key" TEXT(20),"value" TEXT(20),"nona" TEXT(200));', 'CREATE TABLE "nmap_mon" ("mac" TEXT(20) NOT NULL PRIMARY KEY,"ip" TEXT(15),"notename" TEXT(30),"up_time" TEXT(11),"is_online" INTEGER);', 'CREATE TABLE "nmap_mon_list" ("id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"mac" TEXT(20),"up_time" TEXT(20),"jiange" INTEGER);', 'CREATE TABLE "nmap_online" ("mac" TEXT(20) NOT NULL PRIMARY KEY,"ip" TEXT(15),"name" TEXT(50),"notename" TEXT(50),"up_time" TEXT(11),"is_online" INTEGER);', 'CREATE TABLE "user_list" ("uid" integer NOT NULL PRIMARY KEY AUTOINCREMENT,"realname" TEXT,"gender" integer,"birthday" TEXT,"nickname" TEXT,"facepath" TEXT);']
-#=[CreatedatabaseEnd]=
-
-if len(create_table) > 0 and argv != 'update':
-    CreateTables(create_table)
+if argv != 'update':
+    CreateTables()
 
 
 '''
@@ -198,7 +197,7 @@ def add_crontab():
         fstr += "\n" + times_cmd
 
     fo = open(crontab, "w+")
-    line = fo.write(fstr)
+    fo.write(fstr)
     fo.close()
 
     print_str("[完成]",'p')
@@ -262,7 +261,7 @@ def set_soundcard():
 
     if is_write:
         fo = open(alsa_conf, "w")
-        line = fo.write( fstr )
+        fo.write( fstr )
         fo.close()
 
     print_str("[完成]",'p')
@@ -297,7 +296,7 @@ def set_camera():
 
     if is_write:
         fo = open(config, "w")
-        line = fo.write( fstr )
+        fo.write( fstr )
         fo.close()
 
 
@@ -313,7 +312,7 @@ def set_camera():
     if matc==None:
         fo = open(conf, "a+")
         fo.seek(0, 2)
-        line = fo.write('bcm2835-v4l2')
+        fo.write('bcm2835-v4l2')
         fo.close()
 
     print_str("[完成]",'p')
@@ -400,7 +399,7 @@ def set_js():
         fstr = re.sub(redel, '', fstr, 1, re.M|re.I )
 
         fo = open(conf_path, "w")
-        line = fo.write( fstr )
+        fo.write( fstr )
         fo.close()
 
     print_str('[完成]','p')
@@ -412,9 +411,9 @@ def reset_wifi():
     restr = '''ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
 update_config=1
 '''
-    sys_supplicant = '/etc/wpa_supplicant/wpa_supplicant.conf';
+    sys_supplicant = '/etc/wpa_supplicant/wpa_supplicant.conf'
     fo = open(sys_supplicant, "w")
-    line = fo.write( restr )
+    fo.write( restr )
     fo.close()
 
     print_str('[完成]','p')
