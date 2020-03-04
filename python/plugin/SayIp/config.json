@@ -1,0 +1,27 @@
+{
+	"name": "SayIp",
+	"triggerwords":["IP地址", "本机IP"],
+	"IsEnable": true,
+	"IsSystem": false,
+	"AutoLoader": false,
+
+	"icon":"1",
+	"displayName": "报IP地址功能",
+	"description": "官方插件之读本机IP地址功能,可以作为写插件的模板",
+	"version": "0.2.1",
+	"updateTime":"2020-02-11 12:25:00",
+	"control":[
+		{
+			"lable":"控制语音播报",
+			"body":[{
+				"type":"button",
+				"setvalue":"IP地址",
+				"text":"报IP地址"
+			}]
+		}
+	],
+    "repository": {
+		"type": "git",
+		"url": "https://gitee.com/kxdev/plugin__reportip.git"
+	}
+}

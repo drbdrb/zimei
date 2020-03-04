@@ -1,0 +1,15 @@
+2020-02-18 18:57:55,596 [Daemon.detect_netstate] INFO: 网络已连接
+2020-02-18 18:57:57,661 [ControlCenter.LoadPlugin] INFO: 加载插件: [Chat] 
+2020-02-18 18:57:57,800 [ControlCenter.LoadPlugin] INFO: 加载插件: [Wnkg] 
+2020-02-18 18:57:57,811 [ControlCenter.pluginScan] INFO: 所有插件激活词列表:
+2020-02-18 18:57:57,863 [ControlCenter.LoadAll] INFO: 所有进程创建完毕,数量: 9 
+2020-02-18 18:57:57,864 [ControlCenter.LoadAll] INFO: 向每个进程发送心跳消息,测试其回复。
+2020-02-18 18:58:02,435 [ControlCenter.HeartBeat] INFO: Received [HeartBeat] message from [Record]
+2020-02-18 18:58:02,438 [ControlCenter.HeartBeat] INFO: Received [HeartBeat] message from [SpeechSynthesis]
+2020-02-18 18:58:02,439 [ControlCenter.HeartBeat] INFO: Received [HeartBeat] message from [GeneralSwitchProxy]
+2020-02-18 18:58:02,439 [ControlCenter.HeartBeat] INFO: Received [HeartBeat] message from [Wnkg]
+2020-02-18 18:58:02,440 [ControlCenter.HeartBeat] INFO: Received [HeartBeat] message from [MqttProxy]
+2020-02-18 18:58:02,440 [ControlCenter.HeartBeat] INFO: Received [HeartBeat] message from [Chat]
+2020-02-18 18:58:02,441 [ControlCenter.HeartBeat] INFO: Received [HeartBeat] message from [Awake]
+2020-02-18 18:58:02,442 [ControlCenter.HeartBeat] INFO: Received [HeartBeat] message from [Daemon]
+2020-02-18 18:58:02,459 [ControlCenter.HeartBeat] INFO: Received [HeartBeat] message from [Screen]

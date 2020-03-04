@@ -1,17 +1,11 @@
 const {BrowserWindow} = require('electron');
 const ws = require("nodejs-websocket");
-const config = require('./config');
 
-global.config = config
-
-const html_root  = "file:///" + __dirname + '/html/';
-const view_index = html_root + config['VIEW']['path'] + config['VIEW']['index'];
+const html_root  = 'http://127.0.0.1:8088/';
+var view_index = html_root + 'desktop/black.html';
 
 var control = {
 	mainWindow: '',		// webview 窗件
-	is_start: false,	// 首次连接服务器是否成功
-	is_net_ok: false,	// 网络是否连通
-	net_timer: 0,		// 网络探测定时器
 
 	//导航
 	navigat: function( nav_json ){
@@ -30,7 +24,6 @@ var control = {
 		}
 
 		try {
-			//var nav_json = JSON.parse( json );
 			if(typeof(nav_json)=='object'){
 				// event ：'open' 弹出窗口
 				var rx=/^https?:\/\//i;
@@ -64,6 +57,11 @@ var control = {
 				if ( nav_json.event == 'self'){
 					control.mainWindow.loadURL(url);
 				}
+				// event : 'index' 关闭弹出窗口
+				if ( nav_json.event == 'index'){
+					view_index = url
+					control.mainWindow.loadURL(view_index);
+				}
 				// event : 'close' 关闭弹出窗口
 				if (nav_json.event == 'close'){
 					if (typeof(this.childWin) == 'object'){
@@ -74,36 +72,33 @@ var control = {
 				}
 			}
 		}catch(err){
-			console.log("err:"+err);
+			console.log("[JS]:err:"+err);
 		}
 	},
 
-
 	//内部通信服务端
 	start_websocket: function(){
-		console.log("开始建立连接...")
+		console.log("[JS]:开始建立屏幕通讯连接...");
 		var server = ws.createServer((conn)=>{
 		    conn.on("text", (str) => {
 			    //console.log(str);
 			    var json_str = JSON.parse(str);		//字符串转json
-		        if (json_str.t == 'nav'){			//如果是导航消息，直接在这里处理
+		        if (json_str.type == 'nav'){			//如果是导航消息，直接在这里处理
 			        control.navigat(json_str);
 		    	}else{
 			        control.mainWindow.webContents.send('public',json_str);
 				}
 		    })
 		    conn.on("close", (code, reason) => {
-		        console.log("关闭连接")
+		        console.log("[JS]:关闭连接")
 		    });
 		    conn.on("error", (code, reason) => {
-		        console.log("异常关闭")
+		        console.log("[JS]:异常关闭")
 		    });
 		}).listen(8103);
 		server.on("connection", (client_sock)=>{
-			console.log("有客户端接入")
+			console.log("[JS]:有客户端接入")
 		});
-
-		console.log("WebSocket建立完毕")
 	},
 
 	Init: function(mainWindow){
@@ -112,7 +107,7 @@ var control = {
 		//开启通讯服务
 		this.start_websocket();
 
-		this.mainWindow.loadURL( view_index );
+		this.mainWindow.loadURL(view_index);
 	}
 }
 

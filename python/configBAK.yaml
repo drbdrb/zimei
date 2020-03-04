@@ -1,0 +1,70 @@
+# 自美系统的配置文件 请简单了解yaml语法后再小心修改,特别注意冒号':'后要跟一个空格再填数据.
+
+version: '2.0.0'                # 自美系统当前版本
+AwakeEngine: XFAwake            # 唤醒引擎 可选讯飞唤醒 XFAwake 或 snowboy
+RecSeclet: pyAlsa               # 录音 可选 ScoketRec:从unix socket录音 pyAlsa:调用pyalsa.so 录音 Pyaudio:调用Pyaudio录音
+initWifi: ApHot                 # wifi配网 可选 SoundWave 声波配网 ApHot 热点配网
+AudioOutput: Inside             # 音频输出 可选 Inside:驱动板自带的喇叭 External:使用树莓派的HDMI和3.5mmAUX输出(HDMI优先)
+IsGeekMode: False               # 是否采用极客连续对话模式,此选项仅影响唤醒时的对话,对插件的连续对话不影响
+
+snowboy:
+  supplyRecord: False           # 是否提供管道录音
+  BindFile: /tmp/Record.zimei   # socket.AF_UNIX管道绑定文件
+
+XFAwake:
+  supplyRecord: False             # 相关参数在 python/bin/XFawake/awake.ini 中修改
+  
+LoadModular:                    # 系统预加载的模块 true:启用 false:禁用 Start:启用并需要一个Start消息
+  Daemon: Start                 # 守护进程
+  Screen: True                  # 前端APP
+  Record: True                  # 提供录音服务 
+  SpeechSynthesis: True         # 提供文本转语音服务 
+  MqttProxy: True               # MQTT代理
+  GeneralSwitchProxy: True      # 万能开关代理 
+  Awake: Start                   # 唤醒 
+ 
+
+BDAip:                          # 百度Aip账号,可替换为你自已的
+  APP_ID: '15449758'
+  API_KEY: tOpUbG9aNsiVrCYSSug605Tn
+  SECRET_KEY: zVRAwxFWUzzHEfXruUB20wIyhGrzj1b6
+
+Logging:
+  Level: WARNING                # 日志级别 可选 DEBUG INFO WARNING ERROR
+  File: runtime/log/sys.log     # 日志文件 
+  Mode: w                       # 日志写入文件的模式 可选'a'： 追加模式,日志文件会越来越大 'w' 覆盖模式,即覆盖掉以前的日志            
+
+CAMERA:                         # 摄像头配置
+  enable: True                  # 是否启用
+  flip: -1                      # 摄像头翻转 可选 -1:不变 0:上下翻转 1:左右翻转 如果图像倒置选0
+
+GPIO:
+  fengshan_kg: 13               # 降温风扇开关控制脚，0 -- 为关闭此功能
+  deng_kg: 11                   # 装饰灯控制脚
+  setnet_pin: 31                # 配网控制按钮脚
+  detect_man: 16                # 人体探测
+  powersavetime: 30             # 持续n分钟都没有人,则关闭屏幕节能.可选数值[1~65536] 如果为0 则关闭此功能
+
+SCREEN_MARGON:                  # 屏幕边距配置
+  top: 10px
+  right: 10px
+  bottom: 10px
+  left: 10px
+
+VIEW:                           # 前端默认显示
+  index: index.html
+  title: 自美魔镜
+  path: desktop/mojing/
+
+httpapi: https://hapi.16302.com
+
+MQTT:
+  server: mqtt.16302.com
+  port: 1883
+  clientid:
+  mqttname:
+  mqttpass: 
+
+LOCATION:                       # 城市位置
+  city:
+  city_cnid:

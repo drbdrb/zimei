@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>给您的设备配网</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+	<style type="text/css">
+		body{background: #FFF;}
+	    .url1,.url2{color: blue;font-size: 180%;}
+	    #code{padding: 10px;}
+	    #code canvas{width:180px;height:180px;}
+	    .two{display: none;}
+	</style>
+</head>
+<body>
+<div class="">
+    <h3>配置设备联网</h3>
+    <dl>
+	    <dt>步骤：</dt>
+	    <dd class="one">一、打开手机WiFi网络配置；</dd>
+	    <dd class="one">二、找到 <font class="url1">自美配网</font> 的无线网络（无密码）;</dd>
+	    <dd class="one">三、连接到此无线网络上。</dd>
+	    <dd class="two">四、打开手机中任意一款带有扫描二维码功能的浏览器（如：QQ浏览器、360浏览器、chrome等）；</dd>
+	    <dd class="two">五、扫描下方二维码进行上网配置；</dd>
+	    <dd class="two"><div id="code"></div></dd>
+	    <dd class="two">提示：如您手机上没有带有扫描功能浏览器，可尝试手工输入以下网址：</dd>
+	    <dd class="two"><div class="url2"></div></dd>
+    </dl>
+</div>
+<script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
+<script type="text/javascript" src="js/jquery.qrcode.min.js"></script>
+<script type="text/javascript">
+$(function(){
+	var url = 'http://10.0.0.1:8088/';
+	$('#code').qrcode({
+		render: "canvas",
+	    width: 200,
+	    height: 200,
+	    text: url
+	});
+	$(".url2").text( url );
+
+	require('electron').ipcRenderer.on('public',function(event, json){
+		if( json.type == 'setnet' ){
+			if ( parseInt(json.client) > 0){
+				$('.two').show()
+			}else{
+				$('.two').hide()
+			}
+		}
+	})
+})
+</script>
+</body>
+</html>

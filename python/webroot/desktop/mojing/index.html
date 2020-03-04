@@ -1,0 +1,169 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    <title>自美系统</title>
+	<link rel="stylesheet" type="text/css" href="../Public/css/base.css" />
+	<link rel="stylesheet" type="text/css" href="css/index.css" />
+	<link rel="stylesheet" type="text/css" href="css/myweather_ico.css" />
+	<link rel="stylesheet" type="text/css" href="css/myweathern_ico.css" />
+</head>
+<body>
+<div id="loading">
+	<div id="loading-center">
+		<div id="loading-center-absolute">
+			<div class="face"><div class="circle"></div></div>
+			<div class="face"><div class="circle"></div></div>
+			<div class="font" >
+				<div class="line" >走进<br/>智能生活</div>
+				<svg version="1.1" id="dc-spinner" xmlns="http://www.w3.org/2000/svg" viewBox="0 10 35 8" preserveAspectRatio="xMinYMin meet">
+				  <text y="16" font-family="Monaco" font-size="5px" style="letter-spacing:0.6" fill="grey">自美智能系统<animate attributeName="opacity" values="0;1;0" dur="1.8s" repeatCount="indefinite"/>
+				  </text>
+				</svg>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container-fluid main-body" id="main_body">
+	<div class="pos_abs pos_left date-time">
+		<div class="day">
+			<div class="day-top">
+			    <span id="year"></span>
+				<span id="month"></span>
+			</div>
+			<div class="date">
+			    <span id="date"></span>
+			</div>
+			<div class="yingli">
+				<div class="yl-div">
+				    <span id="yl_date"></span>
+				    <span id="yl_year"></span>
+				</div>
+				<div class="week">
+				    <span id="week"></span>
+				</div>
+			</div>
+		</div>
+		<div class="cr"></div>
+		<div class="clock">
+			<code id="hours"></code>
+			<span id="hours-fh">:</span>
+			<code id="minutes"></code>
+			<span id="minutes-fh">:</span>
+			<code id="seconds"></code>
+		</div>
+		<div id="solarlunar2" class="yiji">
+			<div class="kuan">
+				<dl class="yi">
+				    <dt>宜</dt>
+				    <dd id="yi"></dd>
+				</dl>
+				<dl class="ji">
+				    <dt>忌</dt>
+				    <dd id="ji"></dd>
+				</dl>
+			</div>
+		</div>
+		<div class="cr"></div>
+		<div class="life">
+		    <h3 class="fc_cyan">生活指数</h3>
+			<div id="life_index"></div>
+		</div>
+	</div>
+	<div class="pos_abs pos_right weather">
+		<div id="city" class="city">
+		    <span id="city_name">铜陵</span>天气预报<span class="uptime" id="uptime"></span>
+		</div>
+		<div class="real_time">
+			<div class="tianqi fl weatico">
+				<i id="tq_ico" class="ico_100"></i>
+				<span id="tianqi">天气</span>
+			</div>
+			<div class="tg_feng fr">
+			    <div class="tigang wendu fr"><span id="tg_tigang">00</span><b class="fc_cyan">体感温度</b></div>
+			    <div class="fend fr">
+				    <span class="test" id="wind_dir">风向</span>
+			        <span class="test" id="wind_sc">风级</span>
+			    </div>
+			</div>
+		</div>
+
+		<div class="shiwai fl">
+			<div class="shikuan">
+			    <div class="wendu fl"><b class="fc_cyan">温度</b><span id="sw_wendu"></span></div>
+			    <div class="shidu fr"><b class="fc_cyan">湿度</b><span id="sw_shidu"></span></div>
+			</div>
+		</div>
+		<div class="cr"></div>
+		<div class="hourly">
+		    <h3>24小时预报</h3>
+		    <div id="hourly">
+			    <div class="hh">
+				    <ul>
+					    <li>现在</li>
+					    <li class="weatico"><i class="ico_100"></i></li>
+					    <li>12</li>
+				    </ul>
+			    </div>
+		    </div>
+	    </div>
+		<div class="cr"></div>
+		<div class="doutian fl">
+			<h3 class="fc_cyan">七天预报</h3>
+			<div id="doutian">
+				<dl><dt>今天</dt>
+				<dd class="weatico"><i class="ico_100"></i>
+				<ul>
+					<li>晴</li>
+					<li>10℃ ~ 20℃</li>
+				</ul>
+				</dd>
+				</dl>
+				<dl><dt>明天</dt>
+				<dd class="weatico"><i class="ico_100"></i>
+				<ul>
+					<li>晴转多云</li>
+					<li>10℃ ~ 20℃</li>
+				</ul>
+				</dd></dl>
+			</div>
+		</div>
+	</div>
+
+	<div class="micro" id="micro">
+		<canvas id="canvas"></canvas>
+	 	<svg t="1561126448931" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5437" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32"><defs><style type="text/css"></style></defs><path d="M698.624 501.376a170.112 170.112 0 0 1-170.112 170.112h-58.496a170.112 170.112 0 0 1-170.112-170.112V250.048a170.048 170.048 0 0 1 170.112-170.112h58.496a170.112 170.112 0 0 1 170.112 170.112v251.328z" fill="#979FCB" p-id="5438"></path><path d="M725.76 410.624v104.512c0 104.448-87.68 189.12-195.904 189.12H462.464c-108.224 0-195.968-84.672-195.968-189.12V410.624h-31.808v123.904c0 118.912 99.904 215.296 223.04 215.296h76.736c123.264 0 223.104-96.384 223.104-215.296V410.624h-31.808z" fill="#394B97" p-id="5439"></path><path d="M453.184 719.104h92.16v162.944h-92.16z" fill="#394B97" p-id="5440"></path><path d="M734.656 944v-12.224c0-40.896-38.976-74.048-87.232-74.048h-296.32c-48.128 0-87.232 33.216-87.232 74.048v12.224h470.784z" fill="#394B97" p-id="5441"></path><path d="M520.896 225.088h174.464v41.152H520.896zM298.944 225.088h174.464v41.152H298.944zM520.896 297.536h174.464v41.152H520.896zM298.944 297.536h174.464v41.152H298.944zM520.896 375.68h174.464v41.216H520.896zM298.944 375.68h174.464v41.216H298.944zM520.896 448.256h174.464v41.088H520.896zM298.944 448.256h174.464v41.088H298.944z" fill="#5161A4" p-id="5442"></path></svg>
+	</div>
+</div>
+<script src="../Public/js/static/jquery-2.0.3.min.js"></script>
+<script type="text/javascript" src="../Public/js/public.js"></script> <!--公有-->
+<script type="text/javascript" src="js/datefunc.js"></script> <!--时间-->
+<script type="text/javascript">
+$(function(){
+	//设置桌面大小
+	$.ajax({
+		url: '/api/mojing.py',
+		type: "GET",
+		data: {op:'getconfig'},
+		dataType: "json",
+		success: function(config) {
+			$('title').html(config.VIEW.title);
+			var c_size = config.SCREEN_MARGON;
+			var w_h = $(window).height();
+			var w_w = $(window).width();
+			c_width  = (w_w - parseInt(c_size.right) - parseInt(c_size.left)) + 'px';
+			c_height = (w_h - parseInt(c_size.top) - parseInt(c_size.bottom)) + 'px';
+			$('#main_body').css( {'top' : c_size.top, 'left': c_size.left,'width': c_width,'height': c_height } );
+		}
+	});
+
+	dateclass.now_time();
+	setInterval(function(){dateclass.now_time()},1000);
+
+	$(window).resize(function(){window.location.reload()});
+});
+</script>
+</body>
+</html>

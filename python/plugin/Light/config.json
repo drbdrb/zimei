@@ -1,0 +1,16 @@
+{
+	"name": "Light",
+	"triggerwords": ["打开灯", "关闭灯"],
+	"IsEnable": true,
+	"IsSystem": false,
+	"AutoLoader": false,
+	"displayName": "测试灯插件",
+	"description": "用于控制魔镜驱动板上镜前灯开关功能。",
+	"icon":"0",
+	"version": "0.0.1",
+    "updateTime":"2020-02-11 12:25:00",
+    "repository": {
+		"type": "git",
+		"url": "https://github.com/drbdrb/plugin_Light.git"
+	}
+}

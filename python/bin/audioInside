@@ -1,0 +1,43 @@
+# Inside
+
+pcm.!default {
+	type asym
+	playback.pcm {
+		type plug
+		slave.pcm "output"
+	}
+	capture.pcm {
+		type plug
+		slave.pcm "input"
+	}
+}
+
+pcm.output 
+{
+    type plug
+    slave.pcm "dmixed"
+}
+
+pcm.dmixed 
+{
+    type dmix
+    slave.pcm "hw:wm8960soundcard"
+    ipc_key 555555 
+}
+
+ctl.!default 
+{
+	type hw
+	card "wm8960soundcard"
+}
+
+pcm.input
+{
+    type dsnoop
+    slave
+    {
+        pcm "hw:wm8960soundcard"
+        channels 2
+    }
+    ipc_key 666666
+}

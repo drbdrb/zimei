@@ -1,0 +1,16 @@
+{
+	"name": "Chat",
+	"triggerwords":[],
+	"IsEnable": true,
+	"IsSystem": false,
+	"AutoLoader": true,
+	"displayName": "聊天机器人",
+	"description": "基于微信对话机器人写的聊天机器人插件",
+	"icon":"0",
+	"version": "0.0.1",
+    "updateTime":"2020-02-11 12:25:00",
+    "repository": {
+		"type": "git",
+		"url": "https://gitee.com/kxdev/plugin_chatrobot.git"
+	}
+}

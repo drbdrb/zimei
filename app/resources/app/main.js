@@ -3,9 +3,6 @@ const control = require('./control');
 
 var mainWindow = null;
 
-//自定义调试函数
-console = {win:'',log:function(str){this.win.webContents.send('console',str);}}
-
 app.on('window-all-closed', function() {
 	if (process.platform != 'darwin') {
 		app.quit();
@@ -25,7 +22,8 @@ app.on('ready', function() {
 			options = {
 				backgroundColor: '#000000',
 				width: 1024,
-				height: 630
+				height: 630,
+				webPreferences: {webSecurity: false,allowDisplayingInsecureContent:false}
 			}
 		}
 	}else{
@@ -33,7 +31,7 @@ app.on('ready', function() {
 			backgroundColor: '#000000',
 			width: 1,
 			height: 1,
-			webPreferences:{devTools: false},
+			webPreferences:{devTools: false,webSecurity: false,allowDisplayingInsecureContent:false},
 			kiosk: true	//全屏模式
 		}
 	}
@@ -41,8 +39,6 @@ app.on('ready', function() {
 	// 创建浏览器窗口。
 	mainWindow = new BrowserWindow(options);
 	mainWindow.openDevTools();// 打开开发工具
-
-	console.win = mainWindow;
 
 	// 加载应用
 	control.Init(mainWindow);

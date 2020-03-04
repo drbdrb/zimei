@@ -1,0 +1,17 @@
+{
+	"name": "Remind",
+	"triggerwords":["提醒","取消提醒","关闭提醒"],
+	"IsEnable": true,
+	"IsSystem": false,
+	"AutoLoader": false,
+
+	"displayName": "提醒",
+	"description": "提醒用户在何时做何事情，暂末达到设计要求",
+	"icon":"0",
+	"version": "0.0.1",
+    "updateTime":"2020-02-11 12:25:00",
+    "repository": {
+		"type": "git",
+		"url": "https://gitee.com/kxdev/plugin_remind.git"
+	}
+}

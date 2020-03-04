@@ -1,0 +1,108 @@
+{
+	"name": "Music",
+	"triggerwords":["播放本地歌曲", "暂停歌曲", "暂停播放", "继续播放", "歌曲继续","\\b播放\\S{0,4}\\d","\\b切换\\S{0,4}\\d",
+					"停止播放", "停止歌曲", "歌曲停止", "下1曲", "下1首", "上1曲", "上1首", "下一曲", "下一首", "上一曲", "上一首"],
+	"IsEnable": true,
+	"IsSystem": true,
+	"AutoLoader": false,
+
+	"displayName": "音乐播放器",
+	"description": "可以播放微信发送URL网络歌曲也可以播放本地音乐",
+	"icon":"0",
+	"version": "0.0.1",
+	"updateTime":"2020-02-11 12:25:00",
+	"control":[
+		{
+			"lable":"歌曲分类",
+			"body":[
+				{
+					"type":"button",
+					"setvalue":"播放本地歌曲",
+					"text":"播放本地歌曲",
+					"size":"mini"
+				},
+				{
+					"type":"button",
+					"setvalue":"播放儿歌",
+					"text":"儿歌",
+					"plugin":"Chat",
+					"size":"mini"
+				},
+				{
+					"type":"button",
+					"setvalue":"播放流行歌曲",
+					"text":"流行歌曲",
+					"plugin":"Chat",
+					"size":"mini"
+				}
+			]
+		},
+		{
+			"lable":"控制",
+			"body":[
+				{
+					"type":"button",
+					"setvalue":"继续播放",
+					"text":"播放",
+					"size":"mini"
+				},
+				{
+					"type":"button",
+					"setvalue":"暂停播放",
+					"text":"暂停",
+					"size":"mini"
+				},
+				{
+					"type":"button",
+					"setvalue":"停止播放",
+					"text":"停止",
+					"size":"mini"
+				},
+				{
+					"type":"button",
+					"setvalue":"上一曲",
+					"text":"上一首",
+					"size":"mini"
+				}
+				,
+				{
+					"type":"button",
+					"setvalue":"下一曲",
+					"text":"下一首",
+					"size":"mini"
+				}
+			]
+		},
+		{
+			"lable":"音量",
+			"body":[
+				{
+					"type":"slider",
+					"min":20,
+					"max":100,
+					"step":1,
+					"getvalue":"sound",
+					"setvalue":"音量%s",
+					"plugin":"Device"
+				}
+			]
+		},
+		{
+			"lable":"播放列表",
+			"body":[
+				{
+					"type":"picker",
+					"for":"playlist",
+					"getvalue":"playindex",
+					"setvalue":"切换%s",
+					"text":"当前播放："
+				}
+			]
+		}
+	],
+	"initControl": 1,
+    "repository": {
+		"type": "git",
+		"url": "https://gitee.com/kxdev/plugin_music.git"
+	}
+}

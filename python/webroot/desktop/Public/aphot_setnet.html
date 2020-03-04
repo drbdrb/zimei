@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+	<title>热点配网</title>
+	<style type="text/css" media="screen">
+		html,body{overflow: hidden;background:#000}
+	    .qrcode{width: 375px;background-color: rgba(0,0,0,0.5);margin: auto;padding: 10px;border: 1px solid rgba(0,0,0,0.5);}
+	    .qrcode #code{margin: 0 auto;width: fit-content;padding: 8px;background: #FFF;}
+	    .qrcode .text{padding: 8px;font-size: 18px;font-weight: 800;line-height: 23px;color: #FFF;}
+	</style>
+</head>
+<body ontouchstart>
+<div class="qrcode">
+	<div id="code"></div>
+	<div class="text">
+	    打开微信 -> 扫描上面二维码 进行设备配网<br/>
+	    或打开“自美系统”小程序点击：我 -> 设备配网
+	</div>
+</div>
+<script type="text/javascript" src="js/static/jquery-2.0.3.min.js"></script>
+<script type="text/javascript" src="js/static/jquery.qrcode.min.js"></script>
+<script type="text/javascript">
+function getQueryVariable(variable){
+	var query = window.location.search.substring(1);
+	var vars = query.split("&");
+	for (var i=0;i<vars.length;i++) {
+	    var pair = vars[i].split("=");
+	    if(pair[0] == variable){return pair[1];}
+	}
+	return(false);
+}
+$(function(){
+	// var str = getQueryVariable("qr");
+	var str = 'https://hapi.16302.com/xiaocx/setnet/aphot.html';
+	if (str){
+		$('#code').qrcode(str);
+	}
+})
+</script>
+</body>
+</html>

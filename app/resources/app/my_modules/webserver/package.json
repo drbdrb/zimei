@@ -1,7 +1,0 @@
-{
-  "name": "webserver",
-  "version": "1.0.0",
-  "description": "my WebServer",
-  "homepage": "",
-  "main": "./webserver.js"
-}

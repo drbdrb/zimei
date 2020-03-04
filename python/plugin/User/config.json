@@ -1,0 +1,17 @@
+{
+	"name": "User",
+	"displayName": "用户管理",
+	"description": "用户可以通过微信绑定机器，这样就可以微信上远程操控机器了",
+	"IsEnable": true,
+	"IsSystem": false,
+	"AutoLoader": false,
+
+	"triggerwords":["用户绑定","绑定用户","绑定设备","设备绑定","我是谁"],
+	"icon":"0",
+	"version": "0.0.1",
+    "updateTime":"2020-02-11 12:25:00",
+    "repository": {
+		"type": "git",
+		"url": "https://gitee.com/kxdev/plugin_user.git"
+	}
+}

@@ -1,0 +1,92 @@
+AwakeEngine:
+  note: 语音唤醒引擎
+  select:
+    snowboy: snowboy
+    XFAwake: 讯飞唤醒
+
+RecSeclet:
+  note: 录音方式
+  select:
+    pyAlsa: pyalsa录音 
+    ScoketRec: socket录音
+    Pyaudio: Pyaudio录音
+
+initWifi:
+  note: 配网方式
+  select:
+    SoundWave: 声波配网
+    ApHot: 热点配网
+
+AudioOutput:
+  note: 音频输出
+  select:
+    Inside: 驱动板自带的喇叭 
+    External: 使用树莓派的HDMI
+
+IsGeekMode:
+  note: 极客连续对话模式
+  switch:
+    - true
+    - false
+
+LoadModular:
+  note: 系统默认加载模块
+  more:
+    Daemon:
+      note: 守护进程
+      radio:
+        true: 启动
+        Start: 载入后启动
+        false: 禁用
+    Screen:
+      note: 屏幕显示通讯模块
+      radio:
+        true: 启动
+        Start: 载入后启动
+        false: 禁用
+    Record:
+      note: 提供录音服务
+      radio:
+        true: 启动
+        Start: 载入后启动
+        false: 禁用
+    SpeechSynthesis:
+      note: 提供文本转语音服务
+      radio:
+        true: 启动
+        Start: 载入后启动
+        false: 禁用
+    MqttProxy:
+      note: 移动端控制通讯模块
+      radio:
+        true: 启动
+        Start: 载入后启动
+        false: 禁用
+    GeneralSwitchProxy:
+      note: 万能开关通讯模块
+      radio:
+        true: 启动
+        Start: 载入后启动
+        false: 禁用
+    Awake:
+      note: 语音唤醒模块
+      radio:
+        true: 启动
+        Start: 载入后启动
+        false: 禁用
+
+CAMERA:
+  note: 摄像头配置
+  more:
+    enable:
+      note: 是否启用
+      switch:
+        - true
+        - false
+    flip:
+      note: 摄像头方向
+      radio:
+        -1: 不变
+        0: 上下翻转
+        1: 左右翻转
+

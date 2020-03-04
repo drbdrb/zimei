@@ -1,0 +1,17 @@
+{
+	"name": "Device",
+	"triggerwords":[ "打开屏幕", "打开显示", "关闭屏幕", "关闭显示","天气地址","修改位置","声音\\S{2,}", "音量\\S{2,}"],
+	"IsEnable": true,
+	"IsSystem": false,
+	"AutoLoader": false,
+
+	"displayName": "设备控制",
+	"description": "可以通过此插件调节音量和打开或关闭屏幕,修改天气地址",
+	"icon":"0",
+	"version": "0.0.1",
+    "updateTime":"2020-02-11 12:25:00",
+    "repository": {
+		"type": "git",
+		"url": "https://gitee.com/kxdev/plugin_device.git"
+	}
+}
