@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 import os,time,re,sys,json
 import threading
 import requests
@@ -15,18 +15,18 @@ class myThread(threading.Thread):
         self.threadID = threadID
         self.name = name
 
-    def run(self):
-        print_time(self.name)
+    def print_time(self,threadName):
+        global exitFlag, is_print
+        while True:
+            if exitFlag:
+                exit()
+            if is_print:
+                sys.stdout.write('■')
+                sys.stdout.flush()
+            time.sleep(0.5)
 
-def print_time(threadName):
-    global exitFlag, is_print
-    while True:
-        if exitFlag:
-            exit()
-        if is_print:
-            print ('■',end='')
-            sys.stdout.flush()
-        time.sleep(0.5)
+    def run(self):
+        self.print_time(self.name)
 
 class update():
 
@@ -38,10 +38,10 @@ class update():
         self.SYSTEM_DIR = os.path.join(self.SYSTEM_ROOT, 'keyicx')
 
         #升级目录
-        self.UPDATE_DIR = os.path.join(self.SYSTEM_ROOT, 'zmupdate')
+        self.UPDATE_DIR = '/tmp/zmupdate'
 
         #升级进度文件
-        self.UPDATE_FILE = os.path.join(self.SYSTEM_ROOT, 'tmp/zmprogress')
+        self.UPDATE_FILE = '/tmp/zmprogress'
 
         #升级库URL
         self.GITEE_URL = 'https://gitee.com/kxdev/zimeimojing'

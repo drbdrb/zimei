@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
 	<meta charset="utf-8" />
@@ -96,7 +96,7 @@ $(function(){
 	var load_list = function(){
 		select.show();
 		$.ajax({
-			url: '../api/getwifilist.py',
+			url: '../api/setwifi.py?op=getlist',
 			cache: false,
 			beforeSend: function(){
 				$("#loadts").html('正在扫描当前位置可用网络……');
@@ -174,11 +174,11 @@ $(function(){
 			return;
 		}
 		var scan_ssid = $('#scan_ssid').val();
-		var post_data = {'wifiname': wifi_name,'wifipass':wifi_pass,'scanssid': scan_ssid};
+		var post_data = {'op': 'setinfo', 'wifiname': wifi_name,'wifipass':wifi_pass,'scanssid': scan_ssid};
 		$.ajax({
 			url: '../api/setwifi.py',
 			cache: false,
-			type: "POST",
+			type: "GET",
 			data: post_data,
 			beforeSend: function(){
 				_this.attr({'disabled':'disabled'});

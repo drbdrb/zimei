@@ -1,13 +1,14 @@
 {
-	"main": "main.js",
-	"name": "moJing",
-	"scripts": {
-		"start": "electron .",
-		"pack": "electron-packager . moJing --platform=linux,win32 --out ../../../../../electron --arch=armv7l,ia32,x64 --app-version=0.0.3 --electron-version=4.2.9 --icon=./icon.ico"
-	},
-	"dependencies": {
-		"qr-image": "^3.2.0",
-		"querystring": "^0.2.0",
-		"nodejs-websocket": "^1.7.2"
-	}
+    "main": "main.js",
+    "name": "moJing",
+    "version": "0.1.0",
+    "scripts": {
+        "start": "electron .",
+        "pack": "electron-packager . moJing --platform=linux,win32 --out ../../../../../electron --arch=armv7l,ia32,x64 --app-version=0.0.3 --electron-version=4.2.9 --icon=./icon.ico"
+    },
+    "dependencies": {
+        "nodejs-websocket": "^1.7.2",
+        "qr-image": "^3.2.0",
+        "querystring": "^0.2.0"
+    }
 }

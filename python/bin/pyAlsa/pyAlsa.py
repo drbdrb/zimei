@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
-# @Author: GuanghuiSun
+# @Author: atlight
 # @Date: 2019-12-29 01:23:51
-# @LastEditTime: 2020-03-02 17:00:46
+# @LastEditTime: 2020-03-15 17:08:23
 # @Description: 本程序调用 pyalsa.so录制音频 pyalsa是用c直接调用alsa
 
 
 import ctypes
 import os
-import logging
-
+import wave
 
 class AlsaStruct(ctypes.Structure):
     _fields_ = [('device', ctypes.c_char_p),         # 设备名
@@ -32,24 +31,25 @@ class pyAlsa:
         init.argtypes = [AlsaStruct, ctypes.c_bool]
         init.restype = AlsaStruct        
         alsaout = init(alsain, showDebug)
-        self.realArg = alsaout
-        logging.debug("device=%s rate=%d channels=%d frames=%d buffersize=%d " 
-                      % (alsaout.device, alsaout.rate, alsaout.channels, alsaout.frames, alsaout.buffersize))
-        if alsaout.buffersize == 0 or rate != alsaout.rate or channels != alsaout.channels or \
+        if showDebug:
+            print("device= ", alsaout.device, "rate= ", alsaout.rate, "channels= ", alsaout.channels,
+                  "frames= ", alsaout.frames, "buffersize= ", alsaout.buffersize)
+        if alsaout.buffersize == 0 or rate != alsaout.rate or \
            alsaout.buffersize != alsaout.frames * alsaout.channels * 2:
-            logging.debug("\npyalsa.so init() failed !!! \ndevice=%s rate=%d channels=%d frames=%d buffersize=%d \n" 
-                          % (alsaout.device, alsaout.rate, alsaout.channels, alsaout.frames, alsaout.buffersize))
+            print("device= ", alsaout.device, "rate= ", alsaout.rate, "channels= ", alsaout.channels,
+                  "frames= ", alsaout.frames, "buffersize= ", alsaout.buffersize)
             raise 'pyalsa.so init() failed !'
             return
-        self.buffersize = alsaout.buffersize
+        else:
+            self.buffersize = alsaout.buffersize
 
     def read(self):
         self.libso.readsound.argtypes = [ctypes.c_char_p]
         self.libso.readsound.restype = ctypes.c_bool
-        buffer = ctypes.create_string_buffer(b'\0', self.buffersize)
+        buffer = ctypes.create_string_buffer(self.buffersize)
         ret = self.libso.readsound(buffer)
-        # if not ret:
-        # logging.error("Recording XRUN ERROR .")
+        if not ret:
+            print("Recording XRUN ERROR .")
         return buffer
 
     def close(self):
@@ -57,13 +57,17 @@ class pyAlsa:
 
 
 if __name__ == "__main__":
-    ''' 录音样例 3 秒   '''
-    rec = pyAlsa()                           # 1 创建录音对像
+    # 录音样例 5秒
+    rec = pyAlsa(device="default", showDebug=True)             # 1 创建录音对像
     sounds = list()
-    with open('record.pcm', 'wb') as f:
-        for i in range(30):
-            data = rec.read()                # 2 直接读即可
-            sounds.append(data)
-        f.write(b''.join(sounds))
-    rec.close()                              # 3 关闭录音对像
+    for i in range(30):
+        data = rec.read()                                      # 2 直接读即可
+        sounds.append(data)
+        
+    with wave.open('record.wav', 'wb') as wf: 	
+        wf.setnchannels(1)                         
+        wf.setsampwidth(2)                         
+        wf.setframerate(16000)
+        wf.writeframes(b''.join(sounds))
+    rec.close()                                                    # 3 关闭音频对像
 

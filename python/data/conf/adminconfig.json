@@ -1,0 +1,61 @@
+[{
+        "path": "/",
+        "name": "Index",
+        "meta": {
+            "title": "首页",
+            "icon": "el-icon-s-custom"
+        }
+    },
+    {
+        "path": "/chajian",
+        "name": "Chajian",
+        "redirect": "/chajian/myplugin",
+        "meta": {
+            "title": "插件管理",
+            "icon": "el-icon-s-shop"
+        },
+        "children": [{
+                "path": "myplugin",
+                "name": "Myplugin",
+                "meta": {
+                    "title": "已装插件",
+                    "icon": "el-icon-s-ticket"
+                }
+            },
+            {
+                "path": "allplugin",
+                "name": "Allplugin",
+                "meta": {
+                    "title": "插件宝库",
+                    "icon": "el-icon-s-goods"
+                }
+            }
+        ]
+    },
+    {
+        "path": "/system",
+        "name": "System",
+        "redirect": "/system/index",
+        "meta": {
+            "title": "系统管理",
+            "icon": "el-icon-s-tools"
+        },
+        "children": [{
+                "path": "index",
+                "name": "Index",
+                "meta": {
+                    "title": "系统配置",
+                    "icon": "el-icon-setting"
+                }
+            },
+            {
+                "path": "updata",
+                "name": "Updata",
+                "meta": {
+                    "title": "系统升级",
+                    "icon": "el-icon-upload"
+                }
+            }
+        ]
+    }
+]

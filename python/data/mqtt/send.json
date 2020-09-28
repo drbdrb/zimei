@@ -1,0 +1,6 @@
+{
+    "MsgType": "Text",
+    "Receive": "%receive%",
+    "Sender": "%plugin%",
+    "Data": %data%
+}

@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-# @Author: GuanghuiSun
+# @Author: drbdrb
 # @Date: 2020-01-03 09:09:04
-# @LastEditTime: 2020-03-03 13:46:27
+# @LastEditTime: 2020-03-26 01:05:48
 # @Description:  控制中心
 
 import logging
@@ -23,10 +23,12 @@ class ControlCenter(MsgProcess):
     def __init__(self, msgQueue):
         super().__init__(msgQueue)
         self.msgQueue = msgQueue
-        self.ProcessPool = list()  # 进程池
-        self.plugTriggers = dict()  # 插件激活词
+        self.ProcessPool = list()     # 进程池
+        self.plugTriggers = dict()    # 插件激活词
         self.lastSystemPlugin = None  # 最近,正在运行的系统插件    
-        self.isGeekTalk = False  # 连续对话模式
+        self.isGeekTalk = False       # 连续对话模式
+        self.awakeresponse = list()
+        self.AwakeInit()
         self.LoadAll()
 
     def LoadAll(self):
@@ -69,26 +71,56 @@ class ControlCenter(MsgProcess):
         for pro in self.ProcessPool:
             self.send(MsgType=MsgType.HeartBeat, Receiver=pro.name)
 
-        # 准备好了。可以互动了
-        path = 'data/audio/readygo.wav'
-        os.system('aplay -q ' + path)
+    def AwakeInit(self):
+        '''唤醒初始化工作'''
+        echofilePath = r'data/audio/echo'
+        for root, dirs, files in os.walk(echofilePath):
+            for f in files:
+                fnames = os.path.splitext(f)
+                if fnames[1] == '.wav':
+                    echofile = os.path.join(root, f)
+                    waittime = (os.path.getsize(echofile) / 32000) - 0.3
+                    response = {'path': echofile, 'text': fnames[0], 'waittime': waittime}
+                    self.awakeresponse.append(response)
+
 
     def Awake(self, message):
-        """被唤醒时自动执行"""
+        '''被唤醒时自动执行'''
         logging.debug('唤醒')
         self.Silence()
-        echofilePath = r'data/audio/echo'
-        files = map(lambda f: os.path.join(echofilePath, f), os.listdir(echofilePath))
-        echofile = random.choice(list(filter(lambda f: os.path.splitext(f)[1] == '.wav', files)))
-        waittime = (os.path.getsize(echofile) / 32000) - 0.3
-        os.popen(r'aplay -q {}  '.format(echofile))
-        # os.popen(r'mplayer -quiet -nolirc -vo null -ao alsa {}  '.format(echofile))
-        time.sleep(waittime)
+        randarr = random.choice(self.awakeresponse)
+        os.popen(r'aplay -q {}'.format(randarr['path']))
+        time.sleep(randarr['waittime'])
         self.send(MsgType=MsgType.Start, Receiver='Record', Data=5)
         self.isGeekTalk = self.config["IsGeekMode"]
+        if self.config['GPIO']['powersavetime'] > 0:
+            os.system('sudo vcgencmd display_power 1 > /dev/null')
 
+    def Start(self, message):
+        '''处理用控制中心启动核心模块'''
+        module = message['Data']
+        if not module:
+            return
+
+        self.send(MsgType.Stop, Receiver=module)
+        
+        package = r'package.' + module
+        try:
+            package = importlib.import_module(package)
+        except Exception as e:
+            logging.error("loading [%s] error %s " % (module, e))
+            return
+        try:
+            moduleClass = getattr(package, module)
+        except Exception as e:
+            logging.error("loading [%s] error %s " % (module, e))
+            return
+        process = moduleClass(self.msgQueue)
+        process.start()
+        self.ProcessPool.append(process)  # 加入进程池
+        
     def Text(self, message):
-        ''' 处理文本内容 调用相关插件 如果是闲聊数据 ，就发给聊天机器人 '''
+        ''' 处理文本内容 调用相关插件 '''
         text = message['Data']
         if not text:
             return
@@ -127,6 +159,7 @@ class ControlCenter(MsgProcess):
         sysTriggerDic = {r'\b停止\b': MsgType.Stop,
                          r'\b暂停\b': MsgType.Pause,
                          r'\b继续\b': MsgType.Resume}
+
         # print('系统关键词分析')
         for (word, action) in sysTriggerDic.items():
             if re.search(word, text) is not None:
@@ -145,15 +178,16 @@ class ControlCenter(MsgProcess):
                     self.LoadPlugin(plugin)
                 return
         
-        # 没有任何激活词转聊天处理
-        self.send(MsgType.Text, Receiver='Chat', Data=text)
+        # 没有任何激活词转最后一个插件处理
+        last = self.config["LastDefaultPlugin"]
+        self.send(MsgType.Text, Receiver=last, Data=text)
 
     def HeartBeat(self, message):
         """ 控制中心收到各模块心跳消息打印出来 """
         logging.info('Received [HeartBeat] message from [{}]'.format(message['Sender']))
 
     def JobsDone(self, message):
-        if self.isGeekTalk:            
+        if self.isGeekTalk:
             self.Silence()
             self.send(MsgType=MsgType.Start, Receiver='Record', Data=8)
             logging.debug('isGeekTalk so Record.')
@@ -164,15 +198,14 @@ class ControlCenter(MsgProcess):
             self.config["IsGeekMode"] = False
             msg = '连续对话模式已关闭'
             logging.info(msg)
-            # self.send(MsgType.Text,Receiver='SpeechSynthesis', Data = msg)
-            # self.send(MsgType.Text, Receiver='Screen', Data=msg)
 
     def Silence(self, message=None):
         ''' 安静 停止一切音频活动 '''
-        soundPlugins = ['Music']
-        for plugin in soundPlugins:
-            if any(map(lambda p: p.name == plugin, self.ProcessPool)):
-                self.send(MsgType=MsgType.Pause, Receiver=plugin)
+        # soundPlugins = ['Music']
+        # for plugin in soundPlugins:
+        plugin = self.lastSystemPlugin
+        if any(map(lambda p: p.name == plugin, self.ProcessPool)):
+            self.send(MsgType=MsgType.Pause, Receiver=plugin)
         os.popen(r'sudo killall mpg123 > /dev/null 2>&1')
 
     def Stop(self, message):
@@ -192,14 +225,13 @@ class ControlCenter(MsgProcess):
         logging.info('[{}]已退出,当前进程池:{}'.format(message['Sender'], len(self.ProcessPool)))
 
     def ControlCenterQuit(self, message=None):
-        ''' 退出控制中心 由存在run.py 变相重启'''
+        ''' 退出控制中心 由于存在run.py会再次加载所以变相重启控制中心'''
         for pro in self.ProcessPool:
             self.send(MsgType=MsgType.Stop, Receiver=pro.name)
         time.sleep(2)
         super().Stop()
-        os.popen("sudo killall moJing")
-        os.popen("sudo killall moJing")
-        sys.exit()          
+        os.system("sudo pkill -f awake")
+        os.system("sudo pkill -f ControlCenter.py")
 
     def PluginScan(self, message=None):
         """ 扫描插件目录下所有的插件文件并提取其激活词到plugTriggers
@@ -246,6 +278,7 @@ class ControlCenter(MsgProcess):
             pluginName = message
         if pluginName == 'ControlCenter':  # 控制中心无需加载.
             return
+
         # 根据插件名运行插件
         if all(map(lambda p: p.name != pluginName, self.ProcessPool)):  # 如果插件没有运行
             pluginDir = os.path.join(r'plugin', pluginName)
@@ -257,9 +290,12 @@ class ControlCenter(MsgProcess):
                 pluginConfig = json.load(fd)
                 IsEnable = pluginConfig['IsEnable']
                 IsSystem = pluginConfig['IsSystem']
+                AutoLoader = pluginConfig['AutoLoader']
                 if not IsEnable:
                     logging.info('插件[%s]配置为不启用!' % pluginName)
                     return
+                if AutoLoader == "Start":
+                    self.send(MsgType=MsgType.Start, Receiver=pluginName)
                 package = r'plugin.' + pluginName + '.' + pluginName
                 try:
                     module = importlib.import_module(package)
@@ -269,7 +305,7 @@ class ControlCenter(MsgProcess):
                 try:
                     pluginClass = getattr(module, pluginName)
                 except Exception as e:
-                    logging.error('插件[%s]加载失败!' % (pluginName, e))
+                    logging.error('插件[%s]加载失败! %s' % (pluginName, e))
                     return
                 process = pluginClass(self.msgQueue)
                 process.start()
@@ -280,8 +316,13 @@ class ControlCenter(MsgProcess):
 
 
 if __name__ == "__main__":
-    sys.path.append(os.getcwd())
-    sys.path.append(os.path.join(os.getcwd(), 'package'))
-    sys.path.append(os.path.join(os.getcwd(), 'bin'))   
+    cwd = os.getcwd()
+    sys.path.append(cwd)
+    sys.path.append(os.path.join(cwd, 'api'))
+    sys.path.append(os.path.join(cwd, 'bin'))
+    sys.path.append(os.path.join(cwd, 'package'))
+    sys.path.append(os.path.join(cwd, 'include'))
+    sys.path.append(os.path.join(cwd, 'module'))
+    del cwd
     Center = ControlCenter(Queue())
     Center.start()

@@ -1,0 +1,18 @@
+<script src="../../static/js/jquery-2.0.3.min.js"></script>
+<script>
+    $(function() {
+        var getQueryString = function() {
+            var after = window.location.href
+            if (after.indexOf('?') === -1) return null // 如果url中没有传参直接返回空
+            after = after.replace('#/', '')
+            after = after.split('?')[1]
+            return after
+        }
+
+        const hash = getQueryString()
+        if (window.localStorage) {
+            window.localStorage.setItem('x-admin-oauth-code', hash)
+            window.close()
+        }
+    })
+</script>

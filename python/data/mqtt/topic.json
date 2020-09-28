@@ -1,0 +1,4 @@
+{
+    "subscribe":["/%clientid%/equipm/admin","/public/sys/admin"],
+    "pubscribe":["/%clientid%/xiaocx/admin"]
+}

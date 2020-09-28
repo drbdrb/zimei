@@ -1,0 +1,46 @@
+{
+    "name": "GeneralSwith",
+	"displayName": "万能开关默认插件",
+	"description": "官方插件之万能开关默认事件处理插件，此插件会处理所有没有绑到对应插件的万能开关设备消息。",
+	"IsEnable": true,
+	"IsSystem": false,
+	"AutoLoader": true,
+
+	"icon":"2",
+	"version": "0.0.1",
+    "updateTime":"2020-02-11 12:25:00",
+	"triggerwords":["打开指示灯","关闭指示灯"],
+	"control":[
+		{
+			"lable":"指示灯（例子灯）开关状态演示",
+			"body":[
+				{
+					"type":"switch",
+					"getvalue":"switch",
+					"setvalue":{"1":"打开指示灯","0":"关闭指示灯"},
+					"text":"指示灯"
+				},
+				{
+					"type":"input",
+					"text":"自定义指令：",
+					"placeholder": "如：打开/关闭指示灯"
+				}
+			]
+		},
+		{
+			"lable":"指示灯状态",
+			"body":[
+				{
+					"type":"text",
+					"getvalue":"statustext",
+					"text":"状态："
+				}
+			]
+		}
+	],
+	"initControl": 1,
+    "repository": {
+		"type": "git",
+		"url": "https://gitee.com/kxdev/plugin_wnkg.git"
+	}
+}

@@ -7,7 +7,6 @@ from urllib.request import Request, urlopen
 import RPi.GPIO as GPIO
 from MsgProcess import MsgProcess, MsgType
 from bin.Device import Device
-from bin.Setnet import Setnet
 from package.data import data as db
 from package.mylib import mylib
 
@@ -22,14 +21,17 @@ class Daemon(MsgProcess):
         self.pin_setnet = self.config['GPIO']['setnet_pin']             # 配网控制
         self.pin_detect_man = self.config['GPIO']['detect_man']         # 人体探测
         self.powersavetime = self.config['GPIO']['powersavetime']       # 节能时间
+        self.cputemp_high = self.config['GPIO']['cputemp']['high']      # CPU最高温度
+        self.cputemp_low  = self.config['GPIO']['cputemp']['low']       # CPU最低温度
         self.detect_man_time = time.time()  # 探测到人的时间
-
+        self.playreadygo = True
+        self.playno_network = True
         self.arr_setnet = []                                            # 配网按键控制
-        Device.setSoundCard()
         self.u_list = db().user_list_get()                              # 用户列表
         self.showBind = True
         self.isSettingNet = False                                       # 是否正在配网中
         self.pin_fengshan_zt = 0
+        self.set_time_i = 100                                           # 设置时间计时
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(self.pin_fengshan_kg, GPIO.OUT)
@@ -67,55 +69,15 @@ class Daemon(MsgProcess):
                     return
 
                 if self.config['initWifi'] == 'ApHot':
-                    Setnet().main()
+                    from bin.Setnet import Setnet
+                    Netst = Setnet(self.config).main()
+                    if Netst:
+                        self.send(MsgType.Start, Receiver='MqttProxy')  # 启动mqtt
                     return
     
     def Start(self, message):
         ''' 起动守护线程 '''
         Thread(target=self.detectAll, args=(), daemon=True).start()
-
-    def set_soundcard(self):
-        ''' 检测驱动板 '''
-        cardtext = os.popen("aplay -l").read()
-        restr = r'card\s(\d)\:\swm8960soundcard'
-        matc = re.search(restr, cardtext, re.M | re.I)
-        cardnum = 0
-        if matc:
-            cardnum = matc.group(1)
-        else:
-            logging.warning('没有检测到驱动板')
-            import tkinter
-            import tkinter.messagebox
-            root = tkinter.Tk()
-            root.withdraw()
-            tkinter.messagebox.showerror(title='警告', message='没有找到配套的驱动板,系统可能无法完整运行!!!')
-            root.destroy()
-            root.quit()
-            return False
-        
-        # logging.debug('设置默认声卡')
-        # alsa_conf = '/usr/share/alsa/alsa.conf'
-        # f = open(alsa_conf, "r")
-        # fstr = f.read()
-        # f.close()
-
-        # is_write = False
-        # restr = r'^defaults.ctl.card\s+\d\s*$'
-        # matc = re.search(restr, fstr, re.M | re.I)
-        # if matc:
-        #     fstr = re.sub(restr, "defaults.ctl.card " + str(cardnum), fstr, 1, re.M | re.I)
-        #     is_write = True
-
-        # restr = r'^defaults.pcm.card\s+\d\s*$'
-        # matc = re.search(restr, fstr, re.M | re.I)
-        # if matc:
-        #     fstr = re.sub(restr, "defaults.pcm.card " + str(cardnum), fstr, 1, re.M | re.I)
-        #     is_write = True
-
-        # if is_write:
-        #     fo = open(alsa_conf, "w")
-        #     fo.write(fstr)
-        #     fo.close()
 
     def detect_netstate(self):
         '''  监控网络状态 '''
@@ -124,6 +86,14 @@ class Daemon(MsgProcess):
             req = Request(url)
             f = urlopen(req, timeout=10)
             if f.getcode() == 200:
+                self.set_time_i += 1
+                if self.set_time_i > 100:
+                    systime = f.read().decode()
+                    systime = int(systime) + 1      # 偏移1秒
+                    systime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(systime))
+                    os.popen('sudo date -s "'+ systime +'"')
+                    self.set_time_i = 0
+                # print( systime )
                 # data = {'type': 'dev', 'data':  {"netstatus": 1}}
                 # self.send(MsgType.Text, Receiver='Screen', Data=data)
                 self.connectedTime = time.time()
@@ -136,10 +106,19 @@ class Daemon(MsgProcess):
                     if Device.online():                                 # 设备成功上线
                         self.showBindNav()                              # 显示绑定页
                         self.send(MsgType.Start, Receiver='MqttProxy')  # 启动mqtt
+                    if self.playreadygo:                        
+                        # 准备好了。可以互动了
+                        self.playreadygo = False
+                        path = 'data/audio/readygo.wav'
+                        os.system('aplay -q ' + path)
                 return
         except Exception as e:
             logging.warning(e)
-        if time.time() - self.connectedTime > 15:
+        if time.time() - self.connectedTime > 30:
+            if self.playno_network:
+                self.playno_network = False
+                path = 'data/audio/meiyou_wangluo.wav'
+                os.system('aplay -q ' + path)
             self.netStatus = False
             data = {'type': 'dev', 'data': {"netstatus": 0}}
             self.send(MsgType.Text, Receiver='Screen', Data=data)
@@ -149,18 +128,14 @@ class Daemon(MsgProcess):
 
     def detect_cpuwd(self):
         ''' 监控CPU温度 '''
-        # res = os.popen('vcgencmd measure_temp').readline()
-        # wdg = re.match( r"temp=(.+)\'C", res, re.M|re.I)
-        # if wdg.group(1):
-        #    wd = float(wdg.group(1))
         res = os.popen("cat /sys/class/thermal/thermal_zone0/temp").readline()
         wd = int(res) / 1000
-        if wd >= 70:
+        if wd >= self.cputemp_high:
             if self.pin_fengshan_zt == 0:
                 self.pin_fengshan_zt = 1
                 GPIO.output(self.pin_fengshan_kg, GPIO.HIGH)
-                logging.info('起动CPU风扇')
-        if wd < 50:
+                logging.info('启动CPU风扇')
+        if wd < self.cputemp_low:
             if self.pin_fengshan_zt == 1:
                 self.pin_fengshan_zt = 0
                 GPIO.output(self.pin_fengshan_kg, GPIO.LOW)
@@ -168,23 +143,25 @@ class Daemon(MsgProcess):
         return res
     
     def detect_man(self):
-        ''' 人体探测 关闭屏幕节能 ''' 
-        if GPIO.input(self.pin_detect_man):
-            self.detect_man_time = time.time()
-            os.system('sudo vcgencmd display_power 1 > /dev/null')
-        else:
-            if (self.powersavetime > 0) and (time.time() - self.detect_man_time >= self.powersavetime * 60):
-                os.system('sudo vcgencmd display_power 0 > /dev/null')
-                        
+        ''' 人体探测 关闭屏幕节能 '''
+        if self.powersavetime > 0:
+            if GPIO.input(self.pin_detect_man):
+                self.detect_man_time = time.time()
+                os.system('sudo vcgencmd display_power 1 > /dev/null')
+            else:
+                if time.time() - self.detect_man_time >= self.powersavetime * 60:
+                    os.system('sudo vcgencmd display_power 0 > /dev/null')
+
     def detectAll(self):
         time.sleep(5)       # 等待屏幕启动，以免丢失网络图标
-        self.set_soundcard()
+        Device.setSoundCard()     # 设置默认声卡
         ''' 无限循环依次执行allTasks中的任务。每个任务执行后睡眠一秒 '''
         allTasks = [
             'detect_netstate', 
             'detect_cpuwd',
             'detect_man',
-            'detect_setnet']
+            'detect_setnet'
+        ]
         i = 0
         while True: 
             eval('self.'+allTasks[i]+'()')

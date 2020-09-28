@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: UTF-8 -*-
 import os,time,re,sys
-import hashlib
 import sqlite3
 if int(os.popen("id -u").read()) !=0:
     print("请用root权限执行：sudo ./install.py")
@@ -49,36 +48,35 @@ class Install():
 
     def copy_libfile(self):
         self.print_str("拷贝必要的*.so库文件到系统目录" ,'n','n')
-        os.system("sudo cp python/bin/XFawake/libs/ARM/*.so /usr/lib/")
+        os.system("sudo cp python/api/XFawake/libs/ARM/*.so /usr/lib/")
         self.print_str('[完成]','p')
-
-    # 111111111111111111111111111111111111111
 
     # 设置目录权限
     def set_path_chmod(self):
         self.print_str("设置目录下文件权限" ,'n','n')
 
-        self.cmd("sudo chmod +x",'app/moJing')
-        self.cmd('sudo chmod +x','python/bin/setWifi/*')
-        self.cmd('sudo chmod +x','python/bin/XFawake/*')
+        self.cmd("sudo chmod +x", 'app/moJing')
+        self.cmd('sudo chmod +x', 'python/api/XFawake/*')
+        self.cmd('sudo chmod +x', 'python/bin/setWifi/*')
+        self.cmd('sudo chmod +x', 'python/bin/EchoCancellation/*')
+        self.cmd('sudo chmod +x', 'python/bin/pyAlsa/*')
 
         #创建所需目录
-        self.cmd('sudo mkdir -p',r'python/data/conf')
-        self.cmd('sudo mkdir -p',r'python/runtime/log')
-        self.cmd('sudo mkdir -p',r'python/runtime/photo')
-        self.cmd('sudo mkdir -p',r'python/runtime/soundCache')
-        self.cmd('sudo mkdir -p',r'/music')
-        self.cmd('sudo mkdir -p',r'/music/cache')
+        self.cmd('sudo mkdir -p', r'python/data/conf')
+        self.cmd('sudo mkdir -p', r'python/runtime/log')
+        self.cmd('sudo mkdir -p', r'python/runtime/photo')
+        self.cmd('sudo mkdir -p', r'python/runtime/soundCache')   
+        self.cmd('sudo mkdir -p', r'/music/cache')
 
         #该目录下全部权限
-        self.cmd('sudo chown -R pi.pi','python/data/')
+        self.cmd('sudo chown -R pi.pi', 'python/data/')
         self.cmd('sudo chmod -R 0777', 'python/data/')
 
         #该目录下全部不可执行，可读可写
-        self.cmd('sudo chown -R pi.pi','python/runtime/')
+        self.cmd('sudo chown -R pi.pi', 'python/runtime/')
         self.cmd('sudo chmod -R 0777', 'python/runtime/')
-        self.cmd('sudo chown -R pi.pi','/music/cache')
-        self.cmd('sudo chmod -R 0777', '/music/cache')
+        self.cmd('sudo chown -R pi.pi', '/music/cache')
+        self.cmd('sudo chmod -R 0777', '/music/')
 
         #该目录下全部仅执行
         self.cmd('sudo chmod +x' , 'python/run.py')
@@ -86,8 +84,6 @@ class Install():
         self.cmd('sudo chmod +x' , 'python/WebServer.py')
 
         self.print_str('[完成]','p')
-
-    # 222222222222222222222222222222222222222222222222
 
     # 创建系统默认数据库
     def CreateTables(self):
@@ -125,21 +121,19 @@ class Install():
         self.print_str("[完成]",'p')
 
         self.print_str("设置系统配置文件config.yaml" ,'n','n')
-        bak_file = os.path.join(self.root_path, 'python/configBAK.yaml')
+        bak_file = os.path.join(self.root_path, 'python/data/conf/configBAK.yaml')
         con_file = os.path.join(self.root_path, 'python/config.yaml')
         os.system('sudo cp -f ' + bak_file + ' ' + con_file)
         os.system('sudo chmod 0666 python/config.yaml') 
         self.print_str("[完成]",'p')
 
         self.print_str("初始化音量配置asound.state", 'n', 'n')
-        bak_file = os.path.join(self.root_path, 'python/data/asound.stateBAK')
-        con_file = os.path.join(self.root_path, 'python/data/asound.state')
+        bak_file = os.path.join(self.root_path, 'python/data/conf/asound.stateBAK')
+        con_file = os.path.join(self.root_path, 'python/data/conf/asound.state')
         os.system('sudo cp -f '+ bak_file +' '+ con_file)
         os.system("sudo chown pi.pi "+ con_file)
         os.system("sudo chmod 777 "+ con_file)
         self.print_str("[完成]",'p')
-
-    # 333333333333333333333333333333333333333333333333333333
 
     # 管理计划任务
     def add_crontab(self):
@@ -159,7 +153,7 @@ class Install():
         #每隔1小时检测一次
         times_cmd = "0 */1 * * * root "+ time_file + " &"
 
-        r_runfile = r'^\*.+pi export DISPLAY=:0 &&.+\&$'
+        r_runfile = r'^\*.+pi\s+export\s+DISPLAY=:0\s+&&.+\&$'
         matc = re.search( r_runfile, fstr, re.M|re.I )
         if matc==None:
             fstr = "\n" + run_cmd
@@ -170,9 +164,10 @@ class Install():
         if time_matc==None:
             fstr += "\n" + times_cmd
 
-        fo = open(crontab, "w+")
-        fo.write(fstr)
-        fo.close()
+        with open(crontab, 'w') as fso:
+            fso.write(fstr)
+
+        os.system('sudo /etc/init.d/cron restart')
 
         self.print_str("[完成]",'p')
 
@@ -195,59 +190,13 @@ class Install():
 
         self.print_str("[完成]",'p')
 
-
-    # 444444444444444444444444444444444444444444444444444444444
-
-    # 设置默认声卡
-    def set_soundcard(self):
-        self.print_str("设置默认声卡" ,'n','n')
-
-        cardtext = os.popen("aplay -l").read()
-        restr = r'card\s(\d)\:\swm8960soundcard'
-        matc = re.search( restr, cardtext, re.M|re.I )
-        cardnum = 0
-        if matc!=None:
-            cardnum = matc.group(1)
-        else:
-            return
-
-        alsa_conf = '/usr/share/alsa/alsa.conf'
-        f = open(alsa_conf,"r")
-        fstr = f.read()
-        f.close()
-
-        is_write = False
-        restr = r'^defaults.ctl.card\s+\d\s*$'
-        matc = re.search( restr, fstr, re.M|re.I )
-        if matc!=None:
-            fstr = re.sub(restr, "defaults.ctl.card "+ str(cardnum), fstr, 1, re.M|re.I )
-            is_write = True
-
-        restr = r'^defaults.pcm.card\s+\d\s*$'
-        matc = re.search( restr, fstr, re.M|re.I )
-        if matc!=None:
-            fstr = re.sub(restr, "defaults.pcm.card "+ str(cardnum), fstr, 1, re.M|re.I )
-            is_write = True
-
-        if is_write:
-            fo = open(alsa_conf, "w")
-            fo.write( fstr )
-            fo.close()
-
-        self.print_str("[完成]",'p')
-
-    # 555555555555555555555555555555555555555555
-
     # 开始清理工作
     def vacuuming(self):
         self.print_str("开始清理工作" ,'n','n')
-        os.system('rm -f '+ os.path.join(self.root_path, "python/runtime/token") +'/*')
-        os.system('rm -f '+ os.path.join(self.root_path, "python/runtime/hecheng") +'/*')
+        os.system('rm -f '+ os.path.join(self.root_path, "python/runtime/soundCache") +'/*')
+        os.system('rm -f '+ os.path.join(self.root_path, "python/runtime/photo") +'/*')
         os.system('rm -f '+ os.path.join(self.root_path, "python/runtime/log") +'/*')
-        os.system('rm -f '+ os.path.join(self.root_path, "python/runtime/shijue") +'/*')
         self.print_str("[完成]",'p')
-
-    # 666666666666666666666666666666666666666
 
     # 校准时间的方法
     def calibration_time(self):
@@ -256,35 +205,32 @@ class Install():
         self.print_str("正在设置时间核对……",'n','n')
 
         # 时区判断
-        if os.popen("date -R").read().count("0800") == 1:
+        if os.popen("cat /etc/timezone").read().count("Asia/Shanghai") == 1:
             pass
         else:
             #修改时区到中国上海
+            cmd = 'sudo ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime'
+            os.system( cmd )
             with open("/etc/timezone","w") as x:
                 x.write('Asia/Shanghai')
         #在继续修改时间
-        os.system("sudo ntpdate ntp.sjtu.edu.cn")
+        # os.system("sudo ntpdate ntp.sjtu.edu.cn")
 
         self.print_str('[完成]','p')
-
-    # 777777777777777777777777777777777777777777777
 
     # 重置WiFi网络
     def reset_wifi(self):
         self.print_str("正在重置WiFi网络……",'n','n')
-        restr = '''ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
-update_config=1
-'''
-        sys_supplicant = '/etc/wpa_supplicant/wpa_supplicant.conf'
-        fo = open(sys_supplicant, "w")
-        fo.write( restr )
-        fo.close()
+        os.system("sudo wpa_supplicant -B -Dnl80211 -i wlan0 -c /etc/wpa_supplicant/wpa_supplicant.conf")
+        os.system("sudo wpa_cli -i wlan0 set country CN")
+        os.system("sudo wpa_cli -i wlan0 remove_network all")
+        os.system("sudo wpa_cli -i wlan0 save_config")
+        os.system("sudo wpa_cli -i wlan0 reconfigure")
+        os.system("sudo /etc/init.d/networking restart")
 
         self.print_str('[完成]','p')
 
-    # 88888888888888888888888888888888888
-
-    #清理当前install位置和深层所有的__pycache__
+    # 清理当前install位置和深层所有的__pycache__
     def del_pycache(self, file_dir = "./"):
         self.print_str("开始清理__pycache__" ,'n')
         for root, dirs, files in os.walk(file_dir):
@@ -293,8 +239,7 @@ update_config=1
                     self.print_str("正在删除-->"+root+"/"+x, 'n', 'n')
                     os.system("sudo rm -r "+root+"/"+x)
                     self.print_str('[完成]','p')
-
-    # del_pycache(self.root_path) 999999999999999999999999999999999999
+        del files
 
     def main(self, argv=''):
         '''
@@ -314,10 +259,12 @@ update_config=1
             self.reset_wifi()           # 重置WiFi网络
 
         self.add_crontab()              # 管理计划任务
-        # self.set_soundcard()          # 设置默认声卡
         self.vacuuming()                # 开始清理工作
         self.calibration_time()         # 正在设置时间核对
         self.del_pycache(self.root_path)
+
+        self.cmd('sudo chown -R pi.pi', 'python/')
+        self.cmd('sudo chown -R pi.pi', 'app/')
 
         self.print_str("安装工作全部完成*_^ ",'p')
 

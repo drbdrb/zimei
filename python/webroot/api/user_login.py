@@ -19,6 +19,7 @@ class user_login(ApiBase):
                 user_pw[l.split(":")[0]] = l.split(":")[1]
         return user_pw
 
+    # 获取本机IP地址
     def get_localhost(self):
         ipAddrs = os.popen("hostname -I").read()
         ipAddrs = ipAddrs.strip()

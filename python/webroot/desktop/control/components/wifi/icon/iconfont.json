@@ -1,0 +1,72 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "513538",
+      "name": "后十年 密码",
+      "font_class": "mima",
+      "unicode": "e62d",
+      "unicode_decimal": 58925
+    },
+    {
+      "icon_id": "3338437",
+      "name": "WIFI信号-4级",
+      "font_class": "WIFIxinhao-ji",
+      "unicode": "e671",
+      "unicode_decimal": 58993
+    },
+    {
+      "icon_id": "3338440",
+      "name": "WIFI信号-3级",
+      "font_class": "WIFIxinhao-ji1",
+      "unicode": "e672",
+      "unicode_decimal": 58994
+    },
+    {
+      "icon_id": "3338443",
+      "name": "WIFI信号-2级",
+      "font_class": "WIFIxinhao-ji2",
+      "unicode": "e673",
+      "unicode_decimal": 58995
+    },
+    {
+      "icon_id": "3338444",
+      "name": "WIFI信号-1级",
+      "font_class": "WIFIxinhao-ji3",
+      "unicode": "e674",
+      "unicode_decimal": 58996
+    },
+    {
+      "icon_id": "3338445",
+      "name": "WIFI信号-无",
+      "font_class": "WIFIxinhao-wu",
+      "unicode": "e675",
+      "unicode_decimal": 58997
+    },
+    {
+      "icon_id": "4482967",
+      "name": "密码",
+      "font_class": "mima1",
+      "unicode": "e67e",
+      "unicode_decimal": 59006
+    },
+    {
+      "icon_id": "9387176",
+      "name": "14有线网络",
+      "font_class": "youxianwangluo",
+      "unicode": "e61f",
+      "unicode_decimal": 58911
+    },
+    {
+      "icon_id": "13638707",
+      "name": "网络",
+      "font_class": "wangluo",
+      "unicode": "e657",
+      "unicode_decimal": 58967
+    }
+  ]
+}

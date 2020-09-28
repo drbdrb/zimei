@@ -9,6 +9,12 @@ from package.mylib import mylib
 
 class system_update(ApiBase):
 
+    def __get_local_ver(self):
+        version = 'v0.0.1'
+        with open('./data/ver.txt', 'r') as f:
+            version = f.read()
+        return version
+
     def main(self):
         self.SYSTEM_DIR = os.path.abspath(os.path.dirname('../'))
         self.zmprogress = '/tmp/zmprogress'
@@ -18,6 +24,15 @@ class system_update(ApiBase):
             if op == 'isupdate':
                 os.system('sudo python3 '+ self.SYSTEM_DIR + '/update.py isupdate &')
                 ret_arr = {'code': 20000,'message': '提交获取最新版本号操作成功', 'data':{'error':'0000'}}
+                return json.dumps(ret_arr)
+
+            # 获取本地版本号
+            elif op=='localver':
+                data = {
+                    'error': '0000',
+                    'version': str(self.__get_local_ver())
+                }
+                ret_arr = {'code': 20000,'message': '获取当前系统版本号成功', 'data':data}
                 return json.dumps(ret_arr)
 
             # 获取远程版本号
@@ -35,14 +50,14 @@ class system_update(ApiBase):
                         if 'remotever' in file_json:
                             data_ver = file_json['remotever']
 
-                        local_ver = self.config['version']
+                        local_ver = self.__get_local_ver()
                         if mylib.versionCompare(local_ver, data_ver)>0:
                             data = {
                                  'error':'0000',
                                  'upgrade': 1,
                                  'remotever':data_ver
                             }
-                            message = '系统版本已经更新，可以升级'
+                            message = '官方最新版：'+ data_ver +'，已经更新，可以升级'
                         else:
                             data = {
                                  'error':'0000',

@@ -1,0 +1,118 @@
+body {
+    margin: 0px;
+}
+
+html,
+body,
+#app {
+    height: 100%;
+}
+
+.el-menu {
+    border-right: none !important;
+}
+
+.app-wrapper {
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
+#app .sidebar-container {
+    -webkit-transition: width 0.28s;
+    transition: width 0.28s;
+    width: 210px;
+    background-color: #304156;
+    height: 100%;
+    position: fixed;
+    font-size: 0px;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1001;
+    overflow: hidden;
+}
+
+#app .sidebar-container.is-active {
+    width: 65px !important;
+}
+
+#app .main-container {
+    min-height: 100%;
+    -webkit-transition: margin-left .28s;
+    transition: margin-left .28s;
+    margin-left: 210px;
+    position: relative;
+}
+
+#app .main-container.is-active {
+    margin-left: 65px !important;
+}
+
+.navbar {
+    height: 50px;
+    overflow: hidden;
+    position: relative;
+    background: #fff;
+    -webkit-box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+    box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+}
+
+.navbar .app-breadcrumb a {
+    font-weight: 400;
+}
+
+.navbar .hamburger-container {
+    line-height: 46px;
+    height: 100%;
+    float: left;
+    cursor: pointer;
+    -webkit-transition: background .3s;
+    transition: background .3s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.hamburger.is-active {
+    -webkit-transform: rotate(180deg);
+    transform: rotate(180deg);
+}
+
+.hamburger {
+    display: inline-block;
+    vertical-align: middle;
+    width: 20px;
+    height: 20px;
+}
+
+.navbar .breadcrumb-container {
+    float: left;
+}
+
+.app-breadcrumb.el-breadcrumb {
+    display: inline-block;
+    font-size: 14px;
+    line-height: 50px;
+    margin-left: 8px;
+}
+
+.app-main {
+    min-height: calc(100vh - 50px);
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.app-main #appmain {
+    min-height: calc(100vh - 50px);
+    width: 100%;
+}
+
+.el-menu--collapse {
+    height: 100%;
+}
+
+.el-menu-vertical-demo:not(.el-menu--collapse) {
+    width: 210px;
+    height: 100%;
+    min-height: 400px;
+}

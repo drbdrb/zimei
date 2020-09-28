@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# @Author: GuanghuiSun
+# @Author: drbdrb
 # @Date: 2019-12-31 15:57:55
-# @LastEditTime: 2020-03-01 18:44:12
-# @Description: 本插件语音播报本机IP。因功能简单可作其它插件的写作参考模板。
+# @LastEditTime: 2020-01-12 17:19:39
+# @Description: 本插件语音播报本机IP。因功能简单可作其它插件的写作参模板。
 import os
 from MsgProcess import MsgProcess, MsgType
 
@@ -16,9 +16,9 @@ class SayIp(MsgProcess):
             msgstr = "没有网络链接"
         self.say(msgstr)                             # 语音和屏显IP地址
 
-        # 语音交互最简单的例子
+        # 语音交互最简例子
         self.say('是要再播报一次吗？请说\"是的\"或者\"不是\"!')        
-        words = self.listen()    
+        words = self.listen()
         if '是的' in words:
             self.say(msgstr)
         

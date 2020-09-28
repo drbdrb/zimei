@@ -47,7 +47,7 @@ class mylib:
 
     # http访问
     @staticmethod
-    def http_post(url, postdata={}):
+    def http_post(url, postdata={}, timeout=5):
         res = {'code': '9999', 'msg': '[error:mylib.http_post]网络请求失败！', 'data': ''}
         try:
             response = requests.get(url, params=postdata, timeout=5)       # post不兼容本服务器
@@ -162,8 +162,8 @@ class mylib:
         '''
         v1 = re.sub(r'^\D', "", v1)
         v2 = re.sub(r'^\D', "", v2)
-        v1_check = re.match("\d+(\.\d+){0,2}", v1)
-        v2_check = re.match("\d+(\.\d+){0,2}", v2)
+        v1_check = re.match(r"\d+(\.\d+){0,2}", v1)
+        v2_check = re.match(r"\d+(\.\d+){0,2}", v2)
         if v1_check is None or v2_check is None or v1_check.group() != v1 or v2_check.group() != v2:
             return -2   #"版本号格式不对，正确的应该是x.x.x,只能有3段"
         v1_list = v1.split(".")

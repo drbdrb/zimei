@@ -55,9 +55,18 @@ class case_cgi_file(base_case):
     '''可执行脚本'''
 
     def run_cgi(self, handler):
-        module = os.path.basename(handler.path)[:-3]
+        basename = os.path.basename(handler.path)
 
-        package = importlib.import_module(r'.'+ module, package='webroot.api')
+        if handler.IsPlugin:
+            root_package = str(handler.path).replace(r"/",".")
+            root_package = re.sub(basename,"",root_package)
+            root_package = root_package.strip('.')
+        else:
+            root_package = 'webroot.api'
+
+        module = basename[:-3]
+
+        package = importlib.import_module(r'.'+ module, package=root_package)
         moduleClass = getattr(package, module)
         process = moduleClass(handler)
         data = process.main()
@@ -69,8 +78,7 @@ class case_cgi_file(base_case):
         handler.send_content(data.encode("utf-8"), mimetype, status)
 
     def test(self, handler):
-        return os.path.isfile(handler.full_path) and \
-               handler.full_path.endswith('.py')
+        return os.path.isfile(handler.full_path) and handler.full_path.endswith('.py')
 
     def act(self, handler):
         self.run_cgi(handler)
@@ -92,8 +100,7 @@ class case_directory_index_file(base_case):
     '''在根路径下返回主页文件'''
 
     def test(self, handler):
-        return os.path.isdir(handler.full_path) and \
-               os.path.isfile(self.index_path(handler))
+        return os.path.isdir(handler.full_path) and os.path.isfile(self.index_path(handler))
 
     def act(self, handler):
         self.handle_file(handler, self.index_path(handler))
@@ -114,6 +121,8 @@ class case_always_fail(base_case):
 class RequestHandler(BaseHTTPRequestHandler):
 
     Http_Root = os.path.dirname(os.path.abspath(__file__)) + '/webroot'
+    Plug_Root = os.path.dirname(os.path.abspath(__file__))
+    IsPlugin = False
 
     '''
     请求路径合法则返回相应处理
@@ -127,13 +136,17 @@ class RequestHandler(BaseHTTPRequestHandler):
 
     # 错误页面模板
     Error_Page = """\
-        <html>
-        <body>
-        <h1>访问错误 {path}</h1>
-        <p>{msg}</p>
-        </body>
-        </html>
-        """
+<html>
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+</head>
+<body>
+<h1>访问错误 {path}</h1>
+<p>{msg}</p>
+</body>
+</html>
+"""
 
     Mimedic = [
         ('.html', 'text/html'),
@@ -145,8 +158,9 @@ class RequestHandler(BaseHTTPRequestHandler):
         ('.png', 'image/png'),
         ('.jpg', 'image/jpeg'),
         ('.gif', 'image/gif'),
+        ('.svg', 'image/svg+xml'),
         ('.txt', 'text/plain'),
-        ('.avi', 'video/x-msvideo'),
+        ('.avi', 'video/x-msvideo')
     ]
 
     # 处理身份验证
@@ -187,7 +201,12 @@ class RequestHandler(BaseHTTPRequestHandler):
     def handle_request(self):
         try:
             # 得到完整的请求路径
-            self.full_path = self.Http_Root + self.path
+            HttpRoot = self.Http_Root
+            if (re.search( r'^/plugin/', self.path, re.M|re.I)):
+                self.IsPlugin = True
+                HttpRoot = self.Plug_Root
+
+            self.full_path = HttpRoot + self.path
 
             self.mimetype = ''
             filename, fileext = os.path.splitext(self.full_path)
@@ -232,7 +251,6 @@ class WebServer():
     '''HTTP服务器类'''
 
     def start(self):
-        # http.server 使用stderr.write写日志。故转发到空设备屏蔽之
         serverAddress = ('0.0.0.0', 8088)
         server = HTTPServer(serverAddress, RequestHandler)
         server.serve_forever()
@@ -240,7 +258,7 @@ class WebServer():
     # 开始运行
     def Run(self, argv=''):
         if argv.lower() != 'debug':
-            sys.stderr = open(os.devnull, 'w')
+            sys.stderr = open(os.devnull, 'w')      # http.server 使用stderr.write写日志。故转发到空设备屏蔽之
         p = Process(target=self.start)
         p.start()
 

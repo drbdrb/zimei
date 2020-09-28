@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../../../static/element-ui/theme-chalk/index.css">
+    <link rel="stylesheet" href="../static/fonts/iconfont.css">
+    <style>
+        body {
+            margin: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <my-component></my-component>
+    </div>
+</body>
+<script src="../../../static/vue/vue.js"></script>
+<script src="../../../static/vue/vue-router.js"></script>
+<script src="../../../static/vue/httpVueLoader.js"></script>
+<script src="../../../static/vue/axios.min.js"></script>
+<script src="../../../static/element-ui/index.js"></script>
+<script>
+    // 获取地址栏地址
+    function urlget() {
+        var hash = window.location.hash;
+        hash = hash.substr(1, );
+        var path_split = hash.split('?');
+        var base_path = '/404'
+        base_path = path_split[0];
+        if (base_path.search("^\/plugin\/") >= 0) {
+            return base_path + ".vue"
+        } else {
+            if (base_path == '/') {
+                base_path = '/index/index'
+            }
+            return '.' + base_path + ".vue"
+        }
+    };
+
+    // Vue.use(httpVueLoader);
+    var router = new VueRouter()
+
+    // 重写路由跳转
+    router.replace = function(urlobj) {
+        var gourl = 'index.html#' + urlobj.path;
+        var query_str = ''
+        if (urlobj.query) {
+            var query = urlobj.query
+            for (const key in query) {
+                if (query.hasOwnProperty(key)) {
+                    const element = query[key];
+                    query_str += key.toString() + '=' + element.toString() + '&'
+                }
+            }
+            gourl = gourl + '?' + query_str.replace(/^\&+|\&+$/gm, '');
+        }
+        window.location.href = gourl;
+    }
+
+    new Vue({
+        el: '#app',
+        components: {
+            'my-component': httpVueLoader(urlget())
+        },
+        router
+    });
+</script>
+
+</html>

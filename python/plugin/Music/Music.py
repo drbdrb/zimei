@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-# @Author: GuanghuiSun
+# @Author: drbdrb
 # @Date: 2020-01-08 09:05:25
-# @LastEditTime: 2020-01-20 10:14:11
+# @LastEditTime: 2020-03-26 01:07:50
 # @Description:  音乐播放器 主要是从聊天机器处得到一串dict 解析下载播放
 
 import random
@@ -13,7 +13,7 @@ import urllib
 from enum import Enum
 from threading import Thread
 import requests
-import package.mplayer as mplayer
+import include.mplayer as mplayer
 from MsgProcess import MsgProcess, MsgType
 from package.CacheFileManager import CacheFileManager
 
@@ -50,19 +50,21 @@ class Music(MsgProcess):
         if type(data) is str:  # 激活词分析
             Triggers = ['播放本地歌曲', '播放本机歌曲']
             if any(map(lambda w: data.__contains__(w), Triggers)):
-                self.playlist.clear()                
+                self.playlist.clear()
+                musicExt = ['.mp3', '.m4a', '.flac', '.wav', '.wma']
                 for file in os.listdir(self.music_cache_path):
                     url = os.path.abspath(os.path.join(self.music_cache_path, file))
                     if os.path.isfile(url):
                         ext = os.path.splitext(file)[1]
                         name = os.path.splitext(file)[0]
-                        if ext == '.mp3' or ext == '.m4a':
-                            if 0.01 <= os.path.getsize(url) / 10 ** 6 <= 200:  # 大小在10kB~100MB
+                        if ext in musicExt:
+                            if 1024 <= os.path.getsize(url) <= 200*1024*1024:  # 歌曲大小在1kb~200MB
                                 self.playlist.append({'songname': name, 'songurl': url})
                             else:
+                                logging.warning("delete %s " % url)
                                 os.remove(url)
-                random.shuffle(self.playlist)
-                self.playlist = self.playlist[:15]
+                random.shuffle(self.playlist)           # 随机混序
+                self.playlist = self.playlist[:15]      # 选择 15 首
                 self.Start()
                 return
                        
@@ -81,27 +83,31 @@ class Music(MsgProcess):
                 self.Stop()
                 return
 
-            Triggers = ['下一曲', '下一首', '下1曲', '下1首']
-            if any(map(lambda w: data.__contains__(w), Triggers)):
-                self.playindex = (self.playindex + 1) % len(self.playlist)
-                self.Start()
-                return
-
-            Triggers = ['上一曲', '上一首', '上1曲', '上1首']
-            if any(map(lambda w: data.__contains__(w), Triggers)):
-                last = self.playindex - 1
-                self.playindex = (last if (last >= 0) else (len(self.playlist) - 1))
-                self.Start()
-                return
-
-            Triggers = ['播放', '切换']
-            if any(map(lambda w: data.__contains__(w), Triggers)):
-                pattern = r"(\d?\d)"
-                index = re.findall(pattern, data)
-                if index:
-                    self.playindex = int(index[0]) % len(self.playlist)
+            if len(self.playlist) >= 1:
+                Triggers = ['下一曲', '下一首', '下1曲', '下1首']
+                if any(map(lambda w: data.__contains__(w), Triggers)):
+                    self.playindex = (self.playindex + 1) % len(self.playlist)
                     self.Start()
-                return
+                    return
+
+                Triggers = ['上一曲', '上一首', '上1曲', '上1首']
+                if any(map(lambda w: data.__contains__(w), Triggers)):
+                    last = self.playindex - 1
+                    self.playindex = (last if (last >= 0) else (len(self.playlist) - 1))
+                    self.Start()
+                    return
+
+                Triggers = ['播放第', '切换']
+                if any(map(lambda w: data.__contains__(w), Triggers)):
+                    pattern = r"(\d?\d)"
+                    index = re.findall(pattern, data)
+                    if index:
+                        self.playindex = int(index[0]) % len(self.playlist)
+                        self.Start()
+                    return
+            else:
+                text = '歌曲列表是空的'
+                self.say(text)
 
         elif type(data) is dict:
             if data['initstate'] == 'onLoad':
@@ -109,7 +115,7 @@ class Music(MsgProcess):
 
     def Start(self, message=None):
         if self.player is None:
-            self.player = mplayer.Player(args=("-slave -quiet -nolirc -vo null -ao alsa "))
+            self.player = mplayer.Player(args=("-slave -quiet -nolirc  "))   # -vo null -ao alsa
             self.player.cmd_prefix = ' '
 
         if self.autoNextSongThread is None:
@@ -129,7 +135,7 @@ class Music(MsgProcess):
                 Thread(target=self.cacheMusic, args=(nextPlayIndex,)).start()
           
             self.sendMQTT()               
-            self.consoleShow()
+            # self.consoleShow()
 
         else:
             text = '歌曲列表是空的'
@@ -137,7 +143,7 @@ class Music(MsgProcess):
 
     def Pause(self, message=None):
         if self.playState == PlayState.Play:
-            os.system('clear')
+            # os.system('clear')
             logging.info('Pause')            
             self.player.pause()
             self.playState = PlayState.Pause
@@ -147,14 +153,15 @@ class Music(MsgProcess):
             self.player.pause()
             self.playState = PlayState.Play
             self.sendMQTT()
-            self.consoleShow()
+            # self.consoleShow()
           
     def Stop(self, message=None):
-        if self.playState != PlayState.Stop:
-            os.system('clear')
+        if self.playState != PlayState.Stop:          
+            # os.system('clear')            
             self.playState = PlayState.Stop
             self.player.stop()
-            self.player.quit()                           
+            self.player.quit()
+            os.system('sudo killall mplayer > /dev/null 2>&1 ')              
             super().Stop()
 
     def cacheMusic(self, index, showinfo=False):
@@ -180,7 +187,8 @@ class Music(MsgProcess):
         if showinfo:          
             text = '缓冲歌曲: {}...'.format(songname)
             self.playState = PlayState.Buffering
-            self.say(text, onlyForward=True, Receiver='Screen')
+            self.send(MsgType.Text, Receiver='Screen', Data=text)
+            
         result = urllib.parse.urlparse(url)
         m4afile = result.path
         m4afile = re.sub(r'\/', '', m4afile)
@@ -229,9 +237,9 @@ class Music(MsgProcess):
     def sendMQTT(self):
         ''' 将当前播放状态和歌单发送到MQTT '''
         songnames = [song['songname'] for song in self.playlist]
-        data = {"playindex": self.playindex, "PlayState": self.playState.name,
+        data = {"action": "MUSIC_LIST","playindex": self.playindex, "PlayState": self.playState.name,
                 'sound': self.getVolume(), 'playlist': songnames}                 
-        self.send(MsgType.Text, Receiver='MqttProxy', Data=data)        
+        self.send(MsgType.Text, Receiver='MqttProxy', Data=data)
                 
     def getVolume(self):        
         ''' 取得音量大小 ''' 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-# @Autor: atlight
+# @Autor: drbdrb
 # @Date: 2019-12-26 09:35:35
-# @LastEditTime: 2020-01-15 13:59:46
+# @LastEditTime: 2020-03-08 16:36:42
 # @Description: 聊天机器人，只要实现Text消息响应即可。
 
 import json
@@ -50,15 +50,20 @@ class Chat(MsgProcess):
             'EncodingAESKey': '2uetECGe8oob6bbSvLj4DBNjPh2epX1y8mws0pENF5g'
         }
         apiUrl = r'https://openai.weixin.qq.com/openapi/message/'
-        header = {"username": "小美", "msg": text}
+        header = {"username": self.CUID, "msg": text}
         headers = {'alg': "HS256"}
         query = jwt.encode(header, payload['EncodingAESKey'],
                            algorithm=headers['alg'], headers=headers).decode('ascii')
         url = apiUrl + payload['TOKEN']
         post_json = {"query": query}
         post_json = urlencode(post_json).encode('utf-8')
-        page = urllib.request.urlopen(
-            url, data=post_json, timeout=5)  # 响应时间定为了5秒
+        try:
+            page = urllib.request.urlopen(url, data=post_json, timeout=5)  # 响应时间定为了5秒
+        except Exception as e:
+            msg = "和腾讯连接失败"
+            logging.warning("{}:{}".format(msg, e))
+            self.send(MsgType=MsgType.Text, Receiver='Screen', Data=msg)
+            return
         # 判断网络请求成功
         if page.getcode() == 200:
             html = page.read().decode("utf-8")
